@@ -8,17 +8,17 @@
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
-            --accent-color: #bb86fc;
             --text-color: #e0e0e0;
-            --success-color: #03dac6;
+            --nav-bg: #1f1f1f;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
             padding: 20px 20px 80px 20px;
+            user-select: none;
         }
 
         header {
@@ -28,91 +28,129 @@
 
         header h1 {
             font-size: 24px;
-            color: var(--accent-color);
             margin-bottom: 5px;
+            color: #ffffff;
         }
 
-        /* רשת כרטיסיות היעדים */
+        /* רשת הריבועים (הדשבורד) */
         .goals-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
 
+        /* עיצוב כרטיסייה/ריבוע משימה */
         .goal-card {
             background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            border: 1px solid #2c2c2c;
-        }
-
-        .goal-card.completed {
-            border-right: 5px solid var(--success-color);
-        }
-
-        .goal-header {
+            border-radius: 16px;
+            padding: 20px;
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+            aspect-ratio: 1 / 1; /* הופך את הריבוע לסימטרי */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .goal-card:active {
+            transform: scale(0.96);
+        }
+
+        /* סקאלת צבעים דינמית לפי אחוזים (מוזרק דרך JS) */
+        .goal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.12; /* נותן גוון עדין ויוקרתי לריבוע במצב כהה */
+            pointer-events: none;
         }
 
         .goal-title {
             font-weight: bold;
             font-size: 16px;
+            line-height: 1.4;
+            z-index: 1;
+        }
+
+        .goal-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1;
         }
 
         .goal-status {
-            font-size: 14px;
-            color: #888;
+            font-size: 13px;
+            color: #aaa;
+            font-weight: 500;
         }
 
-        /* מד התקדמות */
-        .progress-bar-container {
-            background-color: #333;
-            border-radius: 6px;
-            height: 12px;
+        .progress-container {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            height: 6px;
             width: 100%;
             overflow: hidden;
         }
 
         .progress-bar {
-            background-color: var(--accent-color);
             height: 100%;
-            border-radius: 6px;
-            transition: width 0.5s ease-in-out;
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
 
-        .goal-card.completed .progress-bar {
-            background-color: var(--success-color);
+        /* מסך פנימי ייעודי לכל משימה (Modal/Overlay) */
+        .details-panel {
+            position: fixed;
+            top: 0; bottom: 0; left: 0; right: 0;
+            background-color: var(--bg-color);
+            z-index: 10;
+            display: none;
+            padding: 30px 20px;
+            flex-direction: column;
         }
 
-        .badge-completed {
-            background-color: rgba(3, 218, 198, 0.15);
-            color: var(--success-color);
-            padding: 4px 8px;
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .btn-back {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
         }
 
-        /* סרגל ניווט תחתון למובייל */
+        .panel-content {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            flex-grow: 1;
+            border: 1px solid #2c2c2c;
+        }
+
+        /* סרגל ניווט תחתון קבוע */
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #1f1f1f;
+            bottom: 0; left: 0; right: 0;
+            background-color: var(--nav-bg);
             display: flex;
             justify-content: space-around;
             padding: 12px 0;
-            border-top: 1px solid #333;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+            border-top: 1px solid #2c2c2c;
         }
 
         .nav-item {
-            color: #888;
+            color: #666;
             text-decoration: none;
             font-size: 12px;
             display: flex;
@@ -122,12 +160,8 @@
         }
 
         .nav-item.active {
-            color: var(--accent-color);
+            color: #bb86fc;
             font-weight: bold;
-        }
-
-        .nav-icon {
-            font-size: 18px;
         }
     </style>
 </head>
@@ -135,101 +169,94 @@
 
     <header>
         <h1>המסע אל היעדים</h1>
-        <p>מעקב התקדמות אישי - גיא</p>
+        <p>ממשק מעקב אישי</p>
     </header>
 
-    <div class="goals-grid">
-        
-        <div class="goal-card">
-            <div class="goal-header">
-                <span class="goal-title">💪 15 מתח</span>
-                <span class="goal-status">4 / 15</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 26.6%;"></div>
-            </div>
+    <div class="goals-grid" id="goalsGrid">
         </div>
 
-        <div class="goal-card">
-            <div class="goal-header">
-                <span class="goal-title">💰 חיסכון של 100,000 ש״ח</span>
-                <span class="goal-status">67,500 ₪ / 100,000 ₪</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 67.5%;"></div>
-            </div>
+    <div class="details-panel" id="detailsPanel">
+        <div class="panel-header">
+            <button class="btn-back" onclick="closePanel()">➔ חזרה לדשבורד</button>
+            <h2 id="panelTitle" style="margin: 0; font-size: 20px;"></h2>
         </div>
-
-        <div class="goal-card">
-            <div class="goal-header">
-                <span class="goal-title">📚 קריאת 15 ספרים</span>
-                <span class="goal-status">5 / 15</span>
+        <div class="panel-content" id="panelContent">
             </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 33.3%;"></div>
-            </div>
-        </div>
-
-        <div class="goal-card completed">
-            <div class="goal-header">
-                <span class="goal-title">🎤 הופעה מול 100 אנשים</span>
-                <span class="badge-completed">הושלם! ✓</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 100%;"></div>
-            </div>
-        </div>
-
-        <div class="goal-card">
-            <div class="goal-header">
-                <span class="goal-title">🤝 התנדבות 50 שעות</span>
-                <span class="goal-status">0 / 50 שעות</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 0%;"></div>
-            </div>
-        </div>
-
-        <div class="goal-card completed">
-            <div class="goal-header">
-                <span class="goal-title">🇮🇹 דיבור 10 דקות באיטלקית</span>
-                <span class="badge-completed">הושלם! ✓</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 100%;"></div>
-            </div>
-        </div>
-
-        <div class="goal-card">
-            <div class="goal-header">
-                <span class="goal-title">🎙️ 100 רשומים בפודקאסט</span>
-                <span class="goal-status">28 / 100 רשומים</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 28%;"></div>
-            </div>
-        </div>
-
     </div>
 
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
-            <span class="nav-icon">📊</span>
-            <span>דשבורד</span>
-        </a>
-        <a href="#" class="nav-item">
-            <span class="nav-icon">📅</span>
-            <span>מעקב שבועי</span>
-        </a>
-        <a href="#" class="nav-item">
-            <span class="nav-icon">✏️</span>
-            <span>עדכון</span>
-        </a>
-        <a href="#" class="nav-item">
-            <span class="nav-icon">🤖</span>
-            <span>ייעוץ AI</span>
-        </a>
+        <a href="#" class="nav-item active"><span>📊</span><span>יעדים</span></a>
+        <a href="#" class="nav-item"><span>📅</span><span>שבועי</span></a>
+        <a href="#" class="nav-item"><span>🤖</span><span>ייעוץ AI</span></a>
     </nav>
 
+    <script>
+        // נתוני המטרות של גיא מהוורד והעדכונים האחרונים
+        const goals = [
+            { id: 1, title: "💪 15 מתח", current: 4, target: 15, unit: "חזרות", details: "אימון אחרון: שבוע 11. מיקוד נוכחי בטכניקה ובניית נפח שבועי." },
+            { id: 2, title: "💰 חיסכון כספי", current: 67500, target: 100000, unit: "ש״ח", details: "נצבר בהצלחה כ-67,500 ש״ח. היעד הנוכחי הוא הגעה ל-100k באמצעות התמדה והפקדות קבועות." },
+            { id: 3, title: "📚 קריאת ספרים", current: 5, target: 15, unit: "ספרים", details: "<h3>אינטגרציה של ספרייה דיגיטלית:</h3><ul><li>✔️ השקעות לעצלנים (הושלם)</li><li>⏳ ספר של אהרון ברק (בתהליך)</li></ul>" },
+            { id: 4, title: "🎤 הופעה מול קהל", current: 100, target: 100, unit: "אנשים", details: "הושלם בהצלחה! הופעה מול 100 אנשים." },
+            { id: 5, title: "🤝 התנדבות קהילה", current: 0, target: 50, unit: "שעות", details: "עמותת 'מכל הלב' - פינוי בתים ועזרה לנזקקים. שעות לביצוע: 50." },
+            { id: 6, title: "🇮🇹 שיחה באיטלקית", current: 10, target: 10, unit: "דקות", details: "הושלם בהצלחה! דיבור רציף של 10 דקות עם סימונה." },
+            { id: 7, title: "🎙️ רשומים לפודקאסט", current: 28, target: 100, unit: "רשומים", details: "ערוץ: WiseGuyPodcast.<br>נוכחי: 28 רשומים. יעד: 100 רשומים." }
+        ];
+
+        // פונקציה לחישוב צבע על הסקאלה אדום -> צהוב -> ירוק
+        function getColorForPercentage(pct) {
+            // pct נע בין 0 ל-1.
+            // אדום מוחלט: HSL(0, 100%, 50%)
+            // צהוב מוחלט: HSL(60, 100%, 50%)
+            // ירוק מוחלט: HSL(120, 100%, 50%)
+            const hue = pct * 120; 
+            return `hsl(${hue}, 85%, 45%)`;
+        }
+
+        function initDashboard() {
+            const grid = document.getElementById('goalsGrid');
+            grid.innerHTML = '';
+
+            goals.forEach(goal => {
+                const pct = Math.min(goal.current / goal.target, 1);
+                const color = getColorForPercentage(pct);
+
+                const card = document.createElement('div');
+                card.className = 'goal-card';
+                card.onclick = () => openPanel(goal);
+
+                // הזרקת שכבת צבע רקע דינמית לפי אחוז הקרבה ליעד
+                card.innerHTML = `
+                    <div class="goal-overlay" style="background-color: ${color}; opacity: ${pct === 1 ? 0.25 : 0.15}"></div>
+                    <div class="goal-title">${goal.title}</div>
+                    <div class="goal-footer">
+                        <div class="goal-status">${goal.current.toLocaleString()} / ${goal.target.toLocaleString()} ${goal.unit}</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${pct * 100}%; background-color: ${color};"></div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openPanel(goal) {
+            document.getElementById('panelTitle').innerText = goal.title;
+            document.getElementById('panelContent').innerHTML = `
+                <div style="margin-bottom: 20px; font-size: 16px; color: #ccc;">
+                    <strong>סטטוס נוכחי:</strong> ${goal.current} מתוך ${goal.target} (${Math.round((goal.current/goal.target)*100)}%)
+                </div>
+                <hr style="border-color: #333; margin-bottom: 20px;">
+                <div>${goal.details}</div>
+            `;
+            document.getElementById('detailsPanel').style.display = 'flex';
+        }
+
+        function closePanel() {
+            document.getElementById('detailsPanel').style.display = 'none';
+        }
+
+        // הפעלה ראשונית
+        initDashboard();
+    </script>
 </body>
 </html>
