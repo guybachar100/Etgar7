@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת מעקב יעדים - גיא</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent-color: #bb86fc;
+            --text-color: #e0e0e0;
+            --success-color: #03dac6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 20px 80px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+        }
+
+        /* רשת כרטיסיות היעדים */
+        .goals-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .goal-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid #2c2c2c;
+        }
+
+        .goal-card.completed {
+            border-right: 5px solid var(--success-color);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .goal-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .goal-status {
+            font-size: 14px;
+            color: #888;
+        }
+
+        /* מד התקדמות */
+        .progress-bar-container {
+            background-color: #333;
+            border-radius: 6px;
+            height: 12px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background-color: var(--accent-color);
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .goal-card.completed .progress-bar {
+            background-color: var(--success-color);
+        }
+
+        .badge-completed {
+            background-color: rgba(3, 218, 198, 0.15);
+            color: var(--success-color);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* סרגל ניווט תחתון למובייל */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #1f1f1f;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid #333;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+        }
+
+        .nav-item {
+            color: #888;
+            text-decoration: none;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>המסע אל היעדים</h1>
+        <p>מעקב התקדמות אישי - גיא</p>
+    </header>
+
+    <div class="goals-grid">
+        
+        <div class="goal-card">
+            <div class="goal-header">
+                <span class="goal-title">💪 15 מתח</span>
+                <span class="goal-status">4 / 15</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 26.6%;"></div>
+            </div>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <span class="goal-title">💰 חיסכון של 100,000 ש״ח</span>
+                <span class="goal-status">67,500 ₪ / 100,000 ₪</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 67.5%;"></div>
+            </div>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <span class="goal-title">📚 קריאת 15 ספרים</span>
+                <span class="goal-status">5 / 15</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 33.3%;"></div>
+            </div>
+        </div>
+
+        <div class="goal-card completed">
+            <div class="goal-header">
+                <span class="goal-title">🎤 הופעה מול 100 אנשים</span>
+                <span class="badge-completed">הושלם! ✓</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <span class="goal-title">🤝 התנדבות 50 שעות</span>
+                <span class="goal-status">0 / 50 שעות</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <div class="goal-card completed">
+            <div class="goal-header">
+                <span class="goal-title">🇮🇹 דיבור 10 דקות באיטלקית</span>
+                <span class="badge-completed">הושלם! ✓</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <span class="goal-title">🎙️ 100 רשומים בפודקאסט</span>
+                <span class="goal-status">28 / 100 רשומים</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 28%;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <span class="nav-icon">📊</span>
+            <span>דשבורד</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📅</span>
+            <span>מעקב שבועי</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">✏️</span>
+            <span>עדכון</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🤖</span>
+            <span>ייעוץ AI</span>
+        </a>
+    </nav>
+
+</body>
+</html>
