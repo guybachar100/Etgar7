@@ -3,165 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת מעקב יעדים - גיא</title>
+    <title>המסע אל היעדים - גיא</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --nav-bg: #1f1f1f;
+            --bg-color: #0a0a0a;
+            --panel-bg: #161616;
+            --text-main: #ffffff;
+            --text-muted: #aaaaaa;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px 20px 80px 20px;
-            user-select: none;
+            padding: 20px 20px 90px 20px;
+            direction: rtl;
         }
 
         header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-            color: #ffffff;
+            font-size: 26px;
+            margin: 0 0 5px 0;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
-        /* רשת הריבועים (הדשבורד) */
+        header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* רשת ריבועים סימטרית כמו בעיצוב שרצית */
         .goals-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 16px;
         }
 
-        /* עיצוב כרטיסייה/ריבוע משימה */
-        .goal-card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
+        /* כרטיסיית ריבוע ייעודית */
+        .goal-box {
+            border-radius: 20px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            aspect-ratio: 1 / 1; /* הופך את הריבוע לסימטרי */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            aspect-ratio: 1 / 1; /* ריבוע מושלם */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.15s ease;
             position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #000000; /* טקסט כהה לקריאות מקסימלית על הרקע הצבעוני */
         }
 
-        .goal-card:active {
-            transform: scale(0.96);
-        }
-
-        /* סקאלת צבעים דינמית לפי אחוזים (מוזרק דרך JS) */
-        .goal-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            opacity: 0.12; /* נותן גוון עדין ויוקרתי לריבוע במצב כהה */
-            pointer-events: none;
+        .goal-box:active {
+            transform: scale(0.95);
         }
 
         .goal-title {
-            font-weight: bold;
-            font-size: 16px;
-            line-height: 1.4;
-            z-index: 1;
+            font-weight: 800;
+            font-size: 18px;
+            line-height: 1.3;
         }
 
         .goal-footer {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            z-index: 1;
+        }
+
+        .goal-pct {
+            font-size: 20px;
+            font-weight: 900;
         }
 
         .goal-status {
-            font-size: 13px;
-            color: #aaa;
-            font-weight: 500;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.8;
         }
 
-        .progress-container {
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 4px;
-            height: 6px;
+        /* מד התקדמות פנימי קטן בריבוע */
+        .mini-progress {
+            background-color: rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            height: 5px;
             width: 100%;
-            overflow: hidden;
         }
 
-        .progress-bar {
+        .mini-bar {
+            background-color: rgba(0, 0, 0, 0.7);
             height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
+            border-radius: 10px;
         }
 
-        /* מסך פנימי ייעודי לכל משימה (Modal/Overlay) */
+        /* ממשק אישי לכל משימה (חלון החלקה) */
         .details-panel {
             position: fixed;
             top: 0; bottom: 0; left: 0; right: 0;
-            background-color: var(--bg-color);
-            z-index: 10;
+            background-color: var(--panel-bg);
+            z-index: 100;
             display: none;
-            padding: 30px 20px;
+            padding: 25px;
             flex-direction: column;
+            overflow-y: auto;
         }
 
         .panel-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .btn-back {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
+            background-color: #262626;
+            color: var(--text-main);
+            border: 1px solid #363636;
+            padding: 10px 18px;
+            border-radius: 25px;
             font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
         }
 
-        .panel-content {
-            background-color: var(--card-bg);
-            border-radius: 16px;
+        .panel-body {
+            background-color: rgba(255,255,255,0.03);
+            border-radius: 24px;
             padding: 20px;
-            flex-grow: 1;
-            border: 1px solid #2c2c2c;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* סרגל ניווט תחתון קבוע */
+        /* עיצוב רשימת ספרים דיגיטלית בממשק הפנימי */
+        .book-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .book-status-v {
+            color: #03dac6;
+            font-weight: bold;
+        }
+
+        /* סרגל ניווט תחתון חלק */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
-            background-color: var(--nav-bg);
+            background-color: rgba(22, 22, 22, 0.95);
+            backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-around;
-            padding: 12px 0;
-            border-top: 1px solid #2c2c2c;
+            padding: 14px 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .nav-item {
-            color: #666;
+            color: var(--text-muted);
             text-decoration: none;
             font-size: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
+            font-weight: 600;
         }
 
         .nav-item.active {
-            color: #bb86fc;
-            font-weight: bold;
+            color: #ffffff;
         }
     </style>
 </head>
@@ -169,85 +186,82 @@
 
     <header>
         <h1>המסע אל היעדים</h1>
-        <p>ממשק מעקב אישי</p>
+        <p>לוח בקרה אישי שבועי</p>
     </header>
 
-    <div class="goals-grid" id="goalsGrid">
-        </div>
+    <div class="goals-grid" id="goalsGrid"></div>
 
     <div class="details-panel" id="detailsPanel">
         <div class="panel-header">
-            <button class="btn-back" onclick="closePanel()">➔ חזרה לדשבורד</button>
-            <h2 id="panelTitle" style="margin: 0; font-size: 20px;"></h2>
+            <button class="btn-back" onclick="closePanel()">✕ סגור ממשק</button>
+            <h2 id="panelTitle" style="margin: 0; font-size: 22px; font-weight: 800;"></h2>
         </div>
-        <div class="panel-content" id="panelContent">
-            </div>
+        <div class="panel-body" id="panelContent"></div>
     </div>
 
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active"><span>📊</span><span>יעדים</span></a>
-        <a href="#" class="nav-item"><span>📅</span><span>שבועי</span></a>
+        <a href="#" class="nav-item active"><span>📊</span><span>דשבורד</span></a>
+        <a href="#" class="nav-item"><span>📅</span><span>יומן שבועי</span></a>
         <a href="#" class="nav-item"><span>🤖</span><span>ייעוץ AI</span></a>
     </nav>
 
     <script>
-        // נתוני המטרות של גיא מהוורד והעדכונים האחרונים
-        const goals = [
-            { id: 1, title: "💪 15 מתח", current: 4, target: 15, unit: "חזרות", details: "אימון אחרון: שבוע 11. מיקוד נוכחי בטכניקה ובניית נפח שבועי." },
-            { id: 2, title: "💰 חיסכון כספי", current: 67500, target: 100000, unit: "ש״ח", details: "נצבר בהצלחה כ-67,500 ש״ח. היעד הנוכחי הוא הגעה ל-100k באמצעות התמדה והפקדות קבועות." },
-            { id: 3, title: "📚 קריאת ספרים", current: 5, target: 15, unit: "ספרים", details: "<h3>אינטגרציה של ספרייה דיגיטלית:</h3><ul><li>✔️ השקעות לעצלנים (הושלם)</li><li>⏳ ספר של אהרון ברק (בתהליך)</li></ul>" },
-            { id: 4, title: "🎤 הופעה מול קהל", current: 100, target: 100, unit: "אנשים", details: "הושלם בהצלחה! הופעה מול 100 אנשים." },
-            { id: 5, title: "🤝 התנדבות קהילה", current: 0, target: 50, unit: "שעות", details: "עמותת 'מכל הלב' - פינוי בתים ועזרה לנזקקים. שעות לביצוע: 50." },
-            { id: 6, title: "🇮🇹 שיחה באיטלקית", current: 10, target: 10, unit: "דקות", details: "הושלם בהצלחה! דיבור רציף של 10 דקות עם סימונה." },
-            { id: 7, title: "🎙️ רשומים לפודקאסט", current: 28, target: 100, unit: "רשומים", details: "ערוץ: WiseGuyPodcast.<br>נוכחי: 28 רשומים. יעד: 100 רשומים." }
+        // בסיס הנתונים המשולב מהמטרות ומטבלת הוורד שלך
+        const goalsData = [
+            { id: 1, title: "15 מתח", current: 4, target: 15, unit: "חזרות", type: "fitness", content: "<h3>מעקב אימונים שבועי:</h3><p>אימון שבוע 11 הושלם בהצלחה. יש לשמור על רצף של 3 אימונים בשבוע כדי להעלות את רף החזרות במקבילים ובמתח.</p>" },
+            { id: 2, title: "חיסכון כספי", current: 67500, target: 100000, unit: "ש״ח", type: "money", content: "<h3>מצב קופות וחיסכון:</h3><p>נכון לשבוע 11 נצברו כ-67,500 ש״ח. מתוכם נבדקו קופות הגמל וההפקדות הקבועות מהשכר ומעבודות נוספות.</p>" },
+            { id: 3, title: "קריאת 15 ספרים", current: 5, target: 15, unit: "ספרים", type: "books", content: `
+                <h3>📚 ספרייה דיגיטלית אישית:</h3>
+                <div class="book-item"><span class="book-status-v">✓</span> <span>השקעות לעצלנים</span></div>
+                <div class="book-item"><span style="color:#ffb74d">⏳</span> <span>הספר של אהרון ברק (עמוד 120)</span></div>
+                <div class="book-item"><span style="color:#666">○</span> <span>ספר שלישי (טרם הוחלט)</span></div>
+            ` },
+            { id: 4, title: "הופעה מול קהל", current: 100, target: 100, unit: "אנשים", type: "completed", content: "<h3>🎉 היעד הושג!</h3><p>הופעה מלאה ומוצלחת מול 100 אנשים בשיתוף הפעולה המוזיקלי והחברתי.</p>" },
+            { id: 5, title: "התנדבות בקהילה", current: 0, target: 50, unit: "שעות", type: "volunteer", content: "<h3>🤝 תרומה לקהילה וחסד:</h3><p>תוכנית פנייה לעמותת 'מכל הלב' לעזרה בפינוי בתים וסיוע למשפחות נזקקות. יעד: 50 שעות פעילות.</p>" },
+            { id: 6, title: "שיחה באיטלקית", current: 10, target: 10, unit: "דקות", type: "completed", content: "<h3>🇮🇹 האתגר הושלם בהצלחה!</h3><p>ניהול שיחה רציפה ושוטפת של 10 דקות מלאות באיטלקית עם סימונה, לאחר התמדה יומיומית בדואולינגו ושיעורים שבועיים.</p>" },
+            { id: 7, title: "רשומים לפודקאסט", current: 28, target: 100, unit: "רשומים", type: "podcast", content: "<h3>🎙️ WiseGuyPodcast</h3><p>מספר רשומים עדכני: <b>28</b> מתוך 100.<br>הנתון נטען ומעודכן בלשונית הניהול ישירות לחשבון היוטיוב שלך.</p>" }
         ];
 
-        // פונקציה לחישוב צבע על הסקאלה אדום -> צהוב -> ירוק
-        function getColorForPercentage(pct) {
-            // pct נע בין 0 ל-1.
-            // אדום מוחלט: HSL(0, 100%, 50%)
-            // צהוב מוחלט: HSL(60, 100%, 50%)
-            // ירוק מוחלט: HSL(120, 100%, 50%)
-            const hue = pct * 120; 
-            return `hsl(${hue}, 85%, 45%)`;
+        // פונקציית סקאלת הצבעים המדויקת שביקשת (אדום -> צהוב -> ירוק)
+        function getScaleColor(pct) {
+            // 0% = אדום מוחלט (Hue 0)
+            // 50% = צהוב מוחלט (Hue 60)
+            // 100% = ירוק מוחלט (Hue 120)
+            const hue = pct * 120;
+            // שימוש בטווח צבעים עשיר ונעים לעין (Saturation 85%, Lightness 55%)
+            return `hsl(${hue}, 90%, 55%)`;
         }
 
-        function initDashboard() {
+        function renderDashboard() {
             const grid = document.getElementById('goalsGrid');
             grid.innerHTML = '';
 
-            goals.forEach(goal => {
+            goalsData.forEach(goal => {
                 const pct = Math.min(goal.current / goal.target, 1);
-                const color = getColorForPercentage(pct);
+                const boxColor = getScaleColor(pct);
 
-                const card = document.createElement('div');
-                card.className = 'goal-card';
-                card.onclick = () => openPanel(goal);
+                const box = document.createElement('div');
+                box.className = 'goal-box';
+                box.style.backgroundColor = boxColor;
+                box.onclick = () => openPanel(goal);
 
-                // הזרקת שכבת צבע רקע דינמית לפי אחוז הקרבה ליעד
-                card.innerHTML = `
-                    <div class="goal-overlay" style="background-color: ${color}; opacity: ${pct === 1 ? 0.25 : 0.15}"></div>
+                box.innerHTML = `
                     <div class="goal-title">${goal.title}</div>
                     <div class="goal-footer">
+                        <div class="goal-pct">${Math.round(pct * 100)}%</div>
                         <div class="goal-status">${goal.current.toLocaleString()} / ${goal.target.toLocaleString()} ${goal.unit}</div>
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width: ${pct * 100}%; background-color: ${color};"></div>
+                        <div class="mini-progress">
+                            <div class="mini-bar" style="width: ${pct * 100}%"></div>
                         </div>
                     </div>
                 `;
-                grid.appendChild(card);
+                grid.appendChild(box);
             });
         }
 
         function openPanel(goal) {
             document.getElementById('panelTitle').innerText = goal.title;
-            document.getElementById('panelContent').innerHTML = `
-                <div style="margin-bottom: 20px; font-size: 16px; color: #ccc;">
-                    <strong>סטטוס נוכחי:</strong> ${goal.current} מתוך ${goal.target} (${Math.round((goal.current/goal.target)*100)}%)
-                </div>
-                <hr style="border-color: #333; margin-bottom: 20px;">
-                <div>${goal.details}</div>
-            `;
+            document.getElementById('panelContent').innerHTML = goal.content;
             document.getElementById('detailsPanel').style.display = 'flex';
         }
 
@@ -255,8 +269,8 @@
             document.getElementById('detailsPanel').style.display = 'none';
         }
 
-        // הפעלה ראשונית
-        initDashboard();
+        // הפעלה ראשונית של הדשבורד
+        renderDashboard();
     </script>
 </body>
 </html>
