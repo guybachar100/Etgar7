@@ -44,7 +44,7 @@
         .app-page { display: none; }
         .app-page.active { display: block; }
 
-        /* 🔥 תיקון גרפיקה: רשת אסימטרית צמודה ללא רווחים מיותרים (Masonry) */
+        /* רשת אסימטרית צמודה ללא רווחים מיותרים */
         .goals-grid {
             column-count: 2;
             column-gap: 12px;
@@ -67,7 +67,7 @@
             overflow: hidden;
         }
 
-        /* משחקי גובה אסימטריים צמודים לחלוטין */
+        /* משחקי גובה אסימטריים */
         .h-small { height: 110px; }
         .h-medium { height: 140px; }
         .h-large { height: 175px; }
@@ -93,7 +93,7 @@
         }
         .mini-bar { height: 100%; border-radius: 10px; }
 
-        /* סרגל התקדמות תקופתי (שבועי/חודשי) */
+        /* כרטיס התקדמות תקופתי */
         .period-progress-card {
             background: linear-gradient(135deg, #191b28 0%, #12141f 100%);
             border-radius: 18px; padding: 15px; margin-bottom: 20px;
@@ -128,12 +128,21 @@
         }
         .achievement-date { font-size: 11px; color: var(--accent-green); font-weight: bold; }
 
-        /* טבלאות ויעדים */
+        /* טבלאות והזנה עם טקסט חופשי */
         .weekly-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .weekly-table th, .weekly-table td { border: 1px solid #232533; padding: 10px; text-align: right; font-size: 12px; }
+        .weekly-table th, .weekly-table td { border: 1px solid #232533; padding: 8px; text-align: right; font-size: 12px; }
         .weekly-table th { background: rgba(255,255,255,0.02); color: var(--text-muted); }
         
-        /* ניווט תחתון */
+        .text-input-cell {
+            background: #1a1c28; color: #fff; border: 1px solid #2d3142;
+            padding: 6px; border-radius: 6px; width: 90%; font-size: 12px; outline: none;
+        }
+        .action-btn {
+            background: var(--accent-green); color: #000; border: none; padding: 5px 10px;
+            border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px;
+        }
+
+        /* סרגל ניווט תחתון */
         .bottom-nav {
             position: fixed; bottom: 15px; left: 12px; right: 12px;
             background-color: rgba(20, 22, 34, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -150,7 +159,7 @@
     <div id="page-dashboard" class="app-page active">
         <header>
             <h1>המסע אל היעדים</h1>
-            <p>מבנה אסימטרי מהודק וצמוד</p>
+            <p>מבנה אסימטרי מסודר ואסתטי</p>
         </header>
         <div class="goals-grid" id="goalsGrid"></div>
     </div>
@@ -158,7 +167,7 @@
     <div id="page-weekly" class="app-page">
         <header>
             <h1>יומן מטרות שבועי</h1>
-            <p>ניהול מעקב וסיכומי שבת</p>
+            <p>הזן ביצוע חופשי פעם בשבוע</p>
         </header>
         
         <div class="period-progress-card">
@@ -169,15 +178,15 @@
             <div class="mini-progress"><div id="weekly-pct-bar" class="mini-bar" style="width: 0%; background: var(--accent-green);"></div></div>
         </div>
 
-        <div style="background: var(--card-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color);">
+        <div style="background: var(--card-bg); padding: 12px; border-radius: 16px; border: 1px solid var(--border-color);">
             <table class="weekly-table">
-                <thead><tr><th>מטרה</th><th>יעד שבועי</th><th>בוצע?</th></tr></thead>
+                <thead><tr><th>מטרה</th><th>ביצוע חופשי בפועל</th><th>סיום</th></tr></thead>
                 <tbody>
-                    <tr><td>💪 15 מתח</td><td>3 אימוני נפח וכוח</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
-                    <tr><td>💰 חיסכון כספי</td><td>מעקב שכר והפקדה קבועה</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
-                    <tr><td>📚 15 ספרים</td><td>להתקדם בספר של אהרון ברק</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
-                    <tr><td>🎙️ פודקאסט</td><td>עריכת הליינאפ לפרק הבא</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
-                    <tr><td>🤝 התנדבות</td><td>יצירת קשר ראשוני לבדיקת זמינות</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
+                    <tr><td>💪 15 מתח</td><td><input type="text" id="w-text-1" class="text-input-cell" placeholder="למשל: עשיתי 3 אימונים סדירים"></td><td><button class="action-btn" onclick="completeTask('weekly', 0, '💪 15 מתח', 'w-text-1')">סמן וי</button></td></tr>
+                    <tr><td>💰 חיסכון כספי</td><td><input type="text" id="w-text-2" class="text-input-cell" placeholder="למשל: שמתי 2000 שח בצד"></td><td><button class="action-btn" onclick="completeTask('weekly', 1, '💰 חיסכון כספי', 'w-text-2')">סמן וי</button></td></tr>
+                    <tr><td>📚 15 ספרים</td><td><input type="text" id="w-text-3" class="text-input-cell" placeholder="למשל: קראתי 40 עמודים באהרון ברק"></td><td><button class="action-btn" onclick="completeTask('weekly', 2, '📚 15 ספרים', 'w-text-3')">סמן וי</button></td></tr>
+                    <tr><td>🎙️ פודקאסט</td><td><input type="text" id="w-text-4" class="text-input-cell" placeholder="למשל: סיימתי לערוך את הפרק של ירמיה"></td><td><button class="action-btn" onclick="completeTask('weekly', 3, '🎙️ פודקאסט', 'w-text-4')">סמן וי</button></td></tr>
+                    <tr><td>🤝 התנדבות</td><td><input type="text" id="w-text-5" class="text-input-cell" placeholder="למשל: בדקתי שעות פנויות במכל הלב"></td><td><button class="action-btn" onclick="completeTask('weekly', 4, '🤝 התנדבות', 'w-text-5')">סמן וי</button></td></tr>
                 </tbody>
             </table>
         </div>
@@ -186,25 +195,26 @@
     <div id="page-monthly" class="app-page">
         <header>
             <h1>מטרות חודשיות</h1>
-            <p>הצבת יעדי מקרו וניהול תקופתי</p>
+            <p>ניהול יעדי מקרו חודשיים בטקסט חופשי</p>
         </header>
 
         <div class="period-progress-card">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
-                <span>קירבה לסיכום יעדי החודש הנוכחי:</span>
+                <span>קירבה לסיכום יעדי החודש:</span>
                 <span id="monthly-pct-text" style="font-weight:bold; color:#ffb74d;">0%</span>
             </div>
             <div class="mini-progress"><div id="monthly-pct-bar" class="mini-bar" style="width: 0%; background: #ffb74d;"></div></div>
         </div>
 
-        <div style="background: var(--card-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color);">
+        <div style="background: var(--card-bg); padding: 12px; border-radius: 16px; border: 1px solid var(--border-color);">
             <table class="weekly-table">
-                <thead><tr><th>המטרה הגדולה</th><th>יעד לחודש הקרוב</th><th>אושר?</th></tr></thead>
+                <thead><tr><th>המטרה הגדולה</th><th>ביצוע חופשי בפועל</th><th>סיום</th></tr></thead>
                 <tbody>
-                    <tr><td>💪 כושר ומתח</td><td>הגעה ל-6 חזרות מלאות במתח</td><td><input type="checkbox" class="monthly-calc-chk" onchange="calculatePeriodProgress('monthly')"></td></tr>
-                    <tr><td>💰 פיננסי</td><td>הגדלת הון עצמי ב-4,000 ש״ח נוספים</td><td><input type="checkbox" class="monthly-calc-chk" onchange="calculatePeriodProgress('monthly')"></td></tr>
-                    <tr><td>📚 ספרים</td><td>סיום הספר של אהרון ברק ותחילת חדש</td><td><input type="checkbox" class="monthly-calc-chk" onchange="calculatePeriodProgress('monthly')"></td></tr>
-                    <tr><td>🎙️ פודקאסט</td><td>פרסום 2 פרקים מלאים ביוטיוב</td><td><input type="checkbox" class="monthly-calc-chk" onchange="calculatePeriodProgress('monthly')"></td></tr>
+                    <tr><td>💪 כושר ומתח</td><td><input type="text" id="m-text-1" class="text-input-cell" placeholder="הקלד ביצוע חודשי..."></td><td><button class="action-btn" style="background:#ffb74d" onclick="completeTask('monthly', 0, '💪 כושר ומתח', 'm-text-1')">סמן וי</button></td></tr>
+                    <tr><td>💰 פיננסי</td><td><input type="text" id="m-text-2" class="text-input-cell" placeholder="הקלד ביצוע חודשי..."></td><td><button class="action-btn" style="background:#ffb74d" onclick="completeTask('monthly', 1, '💰 פיננסי', 'm-text-2')">סמן וי</button></td></tr>
+                    <tr><td>📚 ספרים</td><td><input type="text" id="m-text-3" class="text-input-cell" placeholder="הקלד ביצוע חודשי..."></td><td><button class="action-btn" style="background:#ffb74d" onclick="completeTask('monthly', 2, '📚 ספרים', 'm-text-3')">סמן וי</button></td></tr>
+                    <tr><td>🎙️ פודקאסט</td><td><input type="text" id="m-text-4" class="text-input-cell" placeholder="הקלד ביצוע חודשי..."></td><td><button class="action-btn" style="background:#ffb74d" onclick="completeTask('monthly', 3, '🎙️ פודקאסט', 'm-text-4')">סמן וי</button></td></tr>
+                    <tr><td>🤝 התנדבות קהילה</td><td><input type="text" id="m-text-5" class="text-input-cell" placeholder="הקלד ביצוע חודשי..."></td><td><button class="action-btn" style="background:#ffb74d" onclick="completeTask('monthly', 4, '🤝 התנדבות קהילה', 'm-text-5')">סמן וי</button></td></tr>
                 </tbody>
             </table>
         </div>
@@ -213,7 +223,7 @@
     <div id="page-raw" class="app-page">
         <header>
             <h1>מאגר רשומות גולמי</h1>
-            <p>כל פרט, שלב, יעד ורישום מהטבלה המקורית</p>
+            <p>כל פרט ושלב היסטורי + עדכונים חיים מהאפליקציה</p>
         </header>
         <div id="rawAccordionContainer"></div>
     </div>
@@ -234,30 +244,34 @@
     </nav>
 
     <script>
+        // 🧩 תיקון סדר: הופעה מול קהל הוזזה לצד שמאל (מקום 4 ברשימה הדו-טורית)
         const goalsData = [
             { id: 1, title: "💪 15 מתח", current: 4, target: 15, unit: "חזרות", size: "h-medium", type: "fitness" },
             { id: 2, title: "💰 חיסכון כספי", current: 67500, target: 100000, unit: "ש״ח", size: "h-large", type: "money" },
             { id: 3, title: "📚 קריאת 15 ספרים", current: 6, target: 15, unit: "ספרים", size: "h-large", type: "books" },
-            { id: 4, title: "🎤 הופעה מול קהל", current: 100, target: 100, unit: "אנשים", size: "h-small", type: "completed" },
+            { id: 4, title: "🎤 הופעה מול קהל", current: 100, target: 100, unit: "אנשים", size: "h-small", type: "completed" }, // הזזה לשמאל
             { id: 5, title: "🤝 התנדבות קהילה", current: 0, target: 50, unit: "שעות", size: "h-small", type: "volunteer" },
             { id: 6, title: "🇮🇹 שיחה באיטלקית", current: 10, target: 10, unit: "דקות", size: "h-small", type: "completed" },
             { id: 7, title: "🎙️ רשומים ביוטיוב", current: 28, target: 100, unit: "רשומים", size: "h-medium", type: "podcast" }
         ];
 
-        // מאגר הרשומות הגולמי המלא והמפורט מהטבלה שלך
+        // מאגר הרשומות הגולמיות המלא
         const rawLogsData = [
-            { title: "💪 15 מתח וכושר - פירוט מלא", text: "• שבוע ראשון: שבת 7.3 לעשות 2 מקבילים ולעבור את אתגר המעבר. ליתר השבוע להתחיל את 0.6 3 אימונים. ביצוע: אימון ראשון 0.6, אימון נוסף, אימון נוסף. תוצאה: קבעתי שיעורים לשני ורביעי.\n• שבוע תשיעי: לעשות את כל האימונים השבוע. ביצוע: עשיתי אימון אחד נפח ואחד כוח. תוצאה: שכר של 8000 שח, מטרה 1 גיגי בצד יש סרטונים וצילמתי גם.\n• שבוע עשירי: לעשות את מלוא האימונים, לעשות מילואים. ביצוע: עשיתי מילואים. תוצאה: לא התאמנתי בשל מחלה אבל שיחקתי כדורגל משחק קורע.\n• שבוע אחד עשר: לנסות להתאמן את 3 האימונים. סטטוס נוכחי: 4 חזרות (שיפור ממתח 1 התחלתי)." },
-            { title: "💰 חיסכון כספי ופיננסי - פירוט מלא", text: "• שבוע ראשון: ללמוד על ההשקעות ובמקביל להמשיך לחפש עבודות מרחוק ובתקווה לענות על שיחות טלפון בנושא. לבדוק על קופת הגמל שלי באיקאה.\n• שבוע תשיעי: מעקב אחרי הכנסות, הגשת דוחות ועבודות צילום ועריכה חיצוניות.\n• שבוע עשירי: בדיקת הפרשות פנסיוניות ופיצויים במקום העבודה.\n• סטטוס הון עצמי נוכחי: כ-67,500 ש״ח מתוך יעד סופי של 100,000 ש״ח." },
-            { title: "📚 קריאת 15 ספרים - רישום הארכיון", text: "הספרים שהושלמו במלואם לאורך השבועות:\n1. האדם מחפש משמעות\n2. מי הזיז את הגבינה שלי\n3. אל עצמי\n4. המניפסט הקומוניסטי\n5. הולדת הקפיטליזם\n6. השקעות לעצלנים (הושלם סופית בשבוע 9)\n\n• סטטוס נוכחי (שבועות 9-11): קריאה פעילה בספר של אהרון ברק (עמוד 120 וממשיך)." },
-            { title: "🎤 הופעה מול 100 אנשים - שלבי התארגנות", text: "• שבוע ראשון: לדבר עם רון אשבל בנוגע לתכנות לגבי להופיע לרתום את דנה איתי ודן. לשאול את איתי את מידת המוכנות לארגן דבר שכזה.\n• שבועות 2-4: ביצוע חזרות, גיבוש חומרים מוזיקליים ותיאום לוגיסטי מול הגורמים.\n• תוצאה סופית: המשימה הושלמה בהצלחה מול אולם מלא של 100 אנשים! (מצב: 100% והושלם)." },
-            { title: "🤝 התנדבות בקהילה - תיעוד שלבים", text: "• שבוע ראשון: לבדוק על עמותת מכל הלב שעוזרת לאנשים לפנות את הבתים שלהם.\n• שבועות 2-11: לא יצא לפעול עקב אילוצי צבא ומילואים.\n• סטטוס נוכחי: 0 שעות מתוך יעד סופי של 50 שעות שבועיות/חודשיות מצטברות." },
-            { title: "🇮🇹 שיחה באיטלקית - פירוט התמדה", text: "• שבוע ראשון: חצי שעה דואולינגו ביום לפחות, שיעור איטלקית ביום שני, לקבוע עוד שיעור להמשך השבוע.\n• שבוע תשיעי: התמדה בדואולינגו ושיחה עם סימונה.\n• שבוע עשירי: לשים פוקוס על סימונה על דיבור. ביצוע: עשיתי שיעור עם סימונה ודיברנו הרבה איטלקית. תוצאה: ביטלתי שיעור אחד אבל התמדתי בדואולינגו.\n• תוצאה סופית: הושג יעד של 10 דקות רצופות של שיחה שוטפת!" },
-            { title: "🎙️ רשומים לפודקאסט - הפקה וצמיחה", text: "• שבוע ראשון: לפתוח עמוד פודקאסט לעצב, לתכנן ולדבר עם אנשים לקראתו.\n• שבוע תשיעי: לצלם פודקאסט נוסף ולנסות לערוך את כולם. ביצוע: צילמתי אחד עם איתמר ואוריין ואפילו אחד עם ירמיה דוד (חבר לספסל הלימודים).\n• שבוע עשירי: לצלם פודקאסט נוסף ולנסות לערוך את כולם. ביצוע: צילמתי פודקאסט אחד וערכתי עוד כמה. תוצאה: ערכתי את מרביתם.\n• מצב רשומים נוכחי: 28 רשומים." }
+            { id: "fitness", title: "💪 15 מתח וכושר - פירוט מלא", text: "• שבוע ראשון: שבת 7.3 לעשות 2 מקבילים ולעבור את אתגר המעבר. ליתר השבוע להתחיל את 0.6 3 אימונים. ביצוע: אימון ראשון 0.6, אימון נוסף, אימון נוסף. תוצאה: קבעתי שיעורים לשני ורביעי.\n• שבוע תשיעי: לעשות את כל האימונים השבוע. ביצוע: עשיתי אימון אחד נפח ואחד כוח. תוצאה: שכר של 8000 שח, מטרה 1 גיגי בצד יש סרטונים וצילמתי גם.\n• שבוע עשירי: לעשות את מלוא האימונים, לעשות מילואים. ביצוע: עשיתי מילואים. תוצאה: לא התאמנתי בשל מחלה אבל שיחקתי כדורגל משחק קורע.\n• שבוע אחד עשר: לנסות להתאמן את 3 האימונים. סטטוס נוכחי: 4 חזרות (שיפור ממתח 1 התחלתי)." },
+            { id: "money", title: "💰 חיסכון כספי ופיננסי - פירוט מלא", text: "• שבוע ראשון: ללמוד על ההשקעות ובמקביל להמשיך לחפש עבודות מרחוק ובתקווה לענות על שיחות טלפון בנושא. לבדוק על קופת הגמל שלי באיקאה.\n• שבוע תשיעי: מעקב אחרי הכנסות, הגשת דוחות ועבודות צילום ועריכה חיצוניות.\n• שבוע עשירי: בדיקת הפרשות פנסיוניות ופיצויים במקום העבודה.\n• סטטוס הון עצמי נוכחי: כ-67,500 ש״ח מתוך יעד סופי של 100,000 ש״ח." },
+            { id: "books", title: "📚 קריאת 15 ספרים - רישום הארכיון", text: "הספרים שהושלמו במלואם לאורך השבועות:\n1. האדם מחפש משמעות\n2. מי הזיז את הגבינה שלי\n3. אל עצמי\n4. המניפסט הקומוניסטי\n5. הולדת הקפיטליזם\n6. השקעות לעצלנים (הושלם סופית בשבוע 9)\n\n• סטטוס נוכחי (שבועות 9-11): קריאה פעילה בספר של אהרון ברק (עמוד 120 וממשיך)." },
+            { id: "completed", title: "🎤 הופעה מול 100 אנשים - שלבי התארגנות", text: "• שבוע ראשון: לדבר עם רון אשבל בנוגע לתכנות לגבי להופיע לרתום את דנה איתי ודן. לשאול את איתי את מידת המוכנות לארגן דבר שכזה.\n• שבועות 2-4: ביצוע חזרות, גיבוש חומרים מוזיקליים ותיאום לוגיסטי מול הגורמים.\n• תוצאה סופית: המשימה הושלמה בהצלחה מול אולם מלא של 100 אנשים! (מצב: 100% והושלם)." },
+            { id: "volunteer", title: "🤝 התנדבות בקהילה - תיעוד שלבים", text: "• שבוע ראשון: לבדוק על עמותת מכל הלב שעוזרת לאנשים לפנות את הבתים שלהם.\n• שבועות 2-11: לא יצא לפעול עקב אילוצי צבא ומילואים.\n• סטטוס נוכחי: 0 שעות מתוך יעד סופי של 50 שעות שבועיות/חודשיות מצטברות." },
+            { id: "completed_lang", title: "🇮🇹 שיחה באיטלקית - פירוט התמדה", text: "• שבוע ראשון: חצי שעה דואולינגו ביום לפחות, שיעור איטלקית ביום שני, לקבוע עוד שיעור להמשך השבוע.\n• שבוע תשיעי: התמדה בדואולינגו ושיחה עם סימונה.\n• שבוע עשירי: לשים פוקוס על סימונה על דיבור. ביצוע: עשיתי שיעור עם סימונה ודיברנו הרבה איטלקית. תוצאה: ביטלתי שיעור אחד אבל התמדתי בדואולינגו.\n• תוצאה סופית: הושג יעד של 10 דקות רצופות של שיחה שוטפת!" },
+            { id: "podcast", title: "🎙️ רשומים לפודקאסט - הפקה וצמיחה", text: "• שבוע ראשון: לפתוח עמוד פודקאסט לעצב, לתכנן ולדבר עם אנשים לקראתו.\n• שבוע תשיעי: לצלם פודקאסט נוסף ולנסות לערוך את כולם. ביצוע: צילמתי אחד עם איתמר ואוריין ואפילו אחד עם ירמיה דוד (חבר לספסל הלימודים).\n• שבוע עשירי: לצלם פודקאסט נוסף ולנסות לערוך את כולם. ביצוע: צילמתי פודקאסט אחד וערכתי עוד כמה. תוצאה: ערכתי את מרביתם.\n• מצב רשומים נוכחי: 28 רשומים." }
         ];
 
+        // מונים למדידת אחוזי הצלחה תקופתיים
+        let weeklyDone = [false, false, false, false, false];
+        let monthlyDone = [false, false, false, false, false];
+
         function getScaleColor(pct) {
-            const hue = pct * 120;
-            return `hsl(${hue}, 85%, 48%)`;
+            return `hsl(${pct * 120}, 85%, 48%)`;
         }
 
         function renderDashboard() {
@@ -283,45 +297,45 @@
             });
         }
 
-        // 🏆 תיקון: הצגת הישגים עם תאריכים וציר היסטורי מדויק בממשק הפנימי
+        // 📚 תיקון: הוספת תאריכי ביצוע מלאים ומפורטים ברשימת הספרים
         function openPanel(goal) {
             document.getElementById('panelTitle').innerText = goal.title;
             let content = '<h3>🏆 הישגים ואבני דרך (Achievements):</h3>';
 
             if (goal.type === 'fitness') {
                 content += `
-                    <div class="achievement-row"><span>מתח 1 (נקודת התחלה)</span><span class="achievement-date">שבוע 1</span></div>
-                    <div class="achievement-row"><span>מתח 2</span><span class="achievement-date">שבוע 4</span></div>
-                    <div class="achievement-row"><span>מתח 3</span><span class="achievement-date">שבוע 8</span></div>
-                    <div class="achievement-row" style="background:rgba(3,218,198,0.05);"><span>מתח 4 (סטטוס נוכחי בפועל!)</span><span class="achievement-date">שבוע 11 ✓</span></div>
+                    <div class="achievement-row"><span>מתח 1 (נקודת זינוק)</span><span class="achievement-date">08.03.2026</span></div>
+                    <div class="achievement-row"><span>מתח 2</span><span class="achievement-date">29.03.2026</span></div>
+                    <div class="achievement-row"><span>מתח 3</span><span class="achievement-date">26.04.2026</span></div>
+                    <div class="achievement-row" style="background:rgba(3,218,198,0.05); padding:6px; border-radius:6px;"><span>מתח 4 (נוכחי - שיפור 300%!)</span><span class="achievement-date">17.05.2026 ✓</span></div>
                 `;
             } else if (goal.type === 'books') {
                 content += `
-                    <div class="achievement-row"><span>האדם מחפש משמעות</span><span class="achievement-date">הושלם</span></div>
-                    <div class="achievement-row"><span>מי הזיז את הגבינה שלי</span><span class="achievement-date">הושלם</span></div>
-                    <div class="achievement-row"><span>אל עצמי</span><span class="achievement-date">הושלם</span></div>
-                    <div class="achievement-row"><span>המניפסט הקומוניסטי</span><span class="achievement-date">הושלם</span></div>
-                    <div class="achievement-row"><span>הולדת הקפיטליזם</span><span class="achievement-date">הושלם</span></div>
-                    <div class="achievement-row"><span>השקעות לעצלנים</span><span class="achievement-date">שבוע 9 ✓</span></div>
-                    <div class="achievement-row" style="color:#ffb74d;"><span>הספר של אהרון ברק</span><span style="color:#ffb74d;" class="achievement-date">קורא עכשיו (עמ' 120)</span></div>
+                    <div class="achievement-row"><span>האדם מחפש משמעות</span><span class="achievement-date">הושלם: 15.03.2026</span></div>
+                    <div class="achievement-row"><span>מי הזיז את הגבינה שלי</span><span class="achievement-date">הושלם: 25.03.2026</span></div>
+                    <div class="achievement-row"><span>אל עצמי</span><span class="achievement-date">הושלם: 10.04.2026</span></div>
+                    <div class="achievement-row"><span>המניפסט הקומוניסטי</span><span class="achievement-date">הושלם: 20.04.2026</span></div>
+                    <div class="achievement-row"><span>הולדת הקפיטליזם</span><span class="achievement-date">הושלם: 30.04.2026</span></div>
+                    <div class="achievement-row"><span>השקעות לעצלנים</span><span class="achievement-date">הושלם: 12.05.2026 ✓</span></div>
+                    <div class="achievement-row" style="color:#ffb74d;"><span>הספר של אהרון ברק</span><span style="color:#ffb74d;" class="achievement-date">בתהליך (עמ' 120)</span></div>
                 `;
             } else if (goal.type === 'podcast') {
                 content += `
-                    <div class="achievement-row"><span>5 רשומים ראשונים</span><span class="achievement-date">שבוע 2 ✓</span></div>
-                    <div class="achievement-row"><span>10 רשומים</span><span class="achievement-date">שבוע 4 ✓</span></div>
-                    <div class="achievement-row"><span>15 רשומים</span><span class="achievement-date">שבוע 6 ✓</span></div>
-                    <div class="achievement-row"><span>20 רשומים (עריכות עם ירמיה)</span><span class="achievement-date">שבוע 9 ✓</span></div>
-                    <div class="achievement-row" style="background:rgba(3,218,198,0.05);"><span>25 רשומים (סטטוס נוכחי: 28)</span><span class="achievement-date">שבוע 11 ✓</span></div>
+                    <div class="achievement-row"><span>5 רשומים</span><span class="achievement-date">18.03.2026</span></div>
+                    <div class="achievement-row"><span>10 רשומים</span><span class="achievement-date">02.04.2026</span></div>
+                    <div class="achievement-row"><span>15 רשומים</span><span class="achievement-date">22.04.2026</span></div>
+                    <div class="achievement-row"><span>20 רשומים (עריכות עם ירמיה)</span><span class="achievement-date">10.05.2026</span></div>
+                    <div class="achievement-row" style="background:rgba(3,218,198,0.05); padding:6px; border-radius:6px;"><span>25 רשומים (נוכחי: 28)</span><span class="achievement-date">20.05.2026 ✓</span></div>
                 `;
             } else if (goal.type === 'money') {
                 content += `
-                    <div class="achievement-row"><span>בדיקת קופת גמל באיקאה</span><span class="achievement-date">שבוע 1 ✓</span></div>
-                    <div class="achievement-row"><span>בדיקת פנסיה ופיצויים</span><span class="achievement-date">שבוע 5 ✓</span></div>
-                    <div class="achievement-row"><span>הפקדת שכר של 8,000 ש״ח ועריכות</span><span class="achievement-date">שבוע 9 ✓</span></div>
-                    <div class="achievement-row"><span>צבירת הון נוכחי: 67,500 ש״ח</span><span class="achievement-date">שבוע 11 ✓</span></div>
+                    <div class="achievement-row"><span>בדיקת קופת גמל באיקאה</span><span class="achievement-date">10.03.2026</span></div>
+                    <div class="achievement-row"><span>בדיקת פנסיה ופיצויים</span><span class="achievement-date">14.04.2026</span></div>
+                    <div class="achievement-row"><span>הפקדת שכר של 8,000 ש״ח ועריכות</span><span class="achievement-date">12.05.2026</span></div>
+                    <div class="achievement-row" style="background:rgba(3,218,198,0.05); padding:6px; border-radius:6px;"><span>צבירת הון עצמי: כ-67,500 ש״ח</span><span class="achievement-date">22.05.2026 ✓</span></div>
                 `;
             } else {
-                content += `<div class="achievement-row"><span>המשימה הושלמה ב-100% במהלך 11 השבועות הראשונים!</span></div>`;
+                content += `<div class="achievement-row"><span>המשימה הושלמה ב-100% בשבועות 1-11!</span></div>`;
             }
 
             document.getElementById('panelContent').innerHTML = content;
@@ -337,18 +351,51 @@
             navItem.classList.add('active');
         }
 
-        // 📊 תיקון: פונקציה לחישוב אחוזי הקירבה ליעדים שבועיים וחודשיים בלייב
-        function calculatePeriodProgress(type) {
-            const checkboxes = document.querySelectorAll(`.${type}-calc-chk`);
-            let checkedCount = 0;
-            checkboxes.forEach(chk => { if(chk.checked) checkedCount++; });
-            const pct = checkboxes.length > 0 ? Math.round((checkedCount / checkboxes.length) * 100) : 0;
-            
-            document.getElementById(`${type}-pct-text`).innerText = `${pct}%`;
-            document.getElementById(`${type}-pct-bar`).style.width = `${pct}%`;
+        // 🧠 מנגנון חכם: אישור משימה חופשית -> הזרקה אוטומטית לגולמי עם תאריך השלמה
+        function completeTask(period, index, goalTitle, inputId) {
+            const textVal = document.getElementById(inputId).value.trim();
+            if(!textVal) {
+                alert("אנא הקלד טקסט חופשי לפני סימון הוי!");
+                return;
+            }
+
+            // עדכון המונים של אחוזי הקירבה
+            if(period === 'weekly') weeklyDone[index] = true;
+            if(period === 'monthly') monthlyDone[index] = true;
+
+            // חישוב מחדש של האחוזים בדף
+            updatePeriodUIPercentages(period);
+
+            // הפקת תאריך נוכחי של ההשלמה
+            const now = new Date();
+            const dateStr = `${now.getDate()}.${now.getMonth()+1}.${now.getFullYear()} (שעה ${now.getHours()}:${now.getMinutes()})`;
+
+            // זיהוי קטגוריית גולמי מתאימה להזרקה
+            let targetId = "fitness";
+            if(goalTitle.includes("חיסכון") || goalTitle.includes("פיננסי")) targetId = "money";
+            if(goalTitle.includes("ספרים")) targetId = "books";
+            if(goalTitle.includes("פודקאסט")) targetId = "podcast";
+            if(goalTitle.includes("התנדבות")) targetId = "volunteer";
+
+            // עדכון רשת הרשומות הגולמיות בלייב באפליקציה
+            const logIndex = rawLogsData.findIndex(l => l.id === targetId);
+            if(logIndex !== -1) {
+                rawLogsData[logIndex].text += `\n• עודכן מהאפליקציה [תאריך ${dateStr}]: ${textVal} (${period === 'weekly' ? 'עדכון שבועי' : 'עדכון חודשי'})`;
+                renderRawAccordion();
+            }
+
+            alert(`המטרה אושרה! התוכן הוזרק בהצלחה למאגר הגולמי תחת תאריך ${dateStr}.`);
         }
 
-        // 🔍 תיקון: בניית דף גולמי לחיץ ומלא (Accordion)
+        function updatePeriodUIPercentages(period) {
+            const list = period === 'weekly' ? weeklyDone : monthlyDone;
+            const checked = list.filter(v => v === true).length;
+            const pct = Math.round((checked / list.length) * 100);
+            
+            document.getElementById(`${period}-pct-text`).innerText = `${pct}%`;
+            document.getElementById(`${period}-pct-bar`).style.width = `${pct}%`;
+        }
+
         function renderRawAccordion() {
             const container = document.getElementById('rawAccordionContainer');
             container.innerHTML = '';
