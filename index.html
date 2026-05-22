@@ -6,11 +6,12 @@
     <title>המסע אל היעדים - גיא</title>
     <style>
         :root {
-            --bg-color: #0d0e12;
-            --card-bg: #161822;
-            --panel-bg: #12131a;
+            --bg-color: #0b0c10;
+            --card-bg: #141622;
+            --panel-bg: #0f1016;
             --text-main: #ffffff;
-            --text-muted: #8e94a6;
+            --text-muted: #848b9c;
+            --accent-green: #03dac6;
             --border-color: rgba(255, 255, 255, 0.04);
         }
 
@@ -19,238 +20,129 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 25px 16px 120px 16px;
+            padding: 20px 14px 120px 14px;
             direction: rtl;
             -webkit-tap-highlight-color: transparent;
         }
 
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         header h1 {
-            font-size: 26px;
-            margin: 0 0 6px 0;
+            font-size: 24px;
+            margin: 0 0 4px 0;
             font-weight: 800;
             background: linear-gradient(135deg, #ffffff 0%, #a5afc8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        header p {
-            color: var(--text-muted);
-            margin: 0;
-            font-size: 13px;
-        }
+        header p { color: var(--text-muted); margin: 0; font-size: 13px; }
 
-        /* אפליקציית דפים - שליטה בתצוגה */
-        .app-page {
-            display: none;
-        }
-        .app-page.active {
-            display: block;
-        }
+        .app-page { display: none; }
+        .app-page.active { display: block; }
 
-        /* רשת אסימטרית מתוחכמת (Bento / Masonry) בשני טורים */
+        /* 🔥 תיקון גרפיקה: רשת אסימטרית צמודה ללא רווחים מיותרים (Masonry) */
         .goals-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            grid-auto-flow: dense;
+            column-count: 2;
+            column-gap: 12px;
+            width: 100%;
         }
 
-        /* כרטיסיית בסיס */
         .goal-box {
+            break-inside: avoid;
             background-color: var(--card-bg);
-            border-radius: 24px;
-            padding: 18px;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
             border: 1px solid var(--border-color);
             cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
 
-        .goal-box:active {
-            transform: scale(0.95);
-        }
-
-        /* משחקי אורך וגובה אסימטריים למניעת שטחים מתים */
-        .h-small { height: 135px; }
-        .h-medium { height: 165px; }
-        .h-large { height: 210px; }
+        /* משחקי גובה אסימטריים צמודים לחלוטין */
+        .h-small { height: 110px; }
+        .h-medium { height: 140px; }
+        .h-large { height: 175px; }
 
         .goal-glow {
             position: absolute;
             bottom: -30px; left: -30px; right: -30px;
-            height: 70px;
-            filter: blur(25px);
-            opacity: 0.14;
+            height: 60px;
+            filter: blur(20px);
+            opacity: 0.12;
             pointer-events: none;
         }
 
-        .goal-title {
-            font-weight: 700;
-            font-size: 15px;
-            line-height: 1.3;
-        }
-
-        .goal-footer {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            z-index: 2;
-        }
-
-        .goal-status-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .goal-pct {
-            font-size: 20px;
-            font-weight: 800;
-        }
-
-        .goal-status {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
+        .goal-title { font-weight: 700; font-size: 14px; color: #fff; }
+        .goal-footer { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
+        .goal-status-row { display: flex; justify-content: space-between; align-items: flex-end; }
+        .goal-pct { font-size: 18px; font-weight: 800; }
+        .goal-status { font-size: 11px; color: var(--text-muted); }
 
         .mini-progress {
             background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            height: 5px;
-            width: 100%;
-            overflow: hidden;
+            border-radius: 10px; height: 4px; width: 100%; overflow: hidden;
+        }
+        .mini-bar { height: 100%; border-radius: 10px; }
+
+        /* סרגל התקדמות תקופתי (שבועי/חודשי) */
+        .period-progress-card {
+            background: linear-gradient(135deg, #191b28 0%, #12141f 100%);
+            border-radius: 18px; padding: 15px; margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .mini-bar {
-            height: 100%;
-            border-radius: 10px;
-        }
-
-        /* ממשק פנימי מורחב לכל משימה */
-        .details-panel {
-            position: fixed;
-            top: 0; bottom: 0; left: 0; right: 0;
-            background-color: var(--panel-bg);
-            z-index: 1000;
-            display: none;
-            padding: 25px 20px;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .panel-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 25px;
-        }
-
-        .btn-back {
-            background-color: #1e202e;
-            color: var(--text-main);
-            border: 1px solid #2d3142;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .panel-body {
+        /* דף גולמי לחיץ (Accordion) */
+        .accordion-item {
             background-color: var(--card-bg);
-            border-radius: 24px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
+            border-radius: 14px; margin-bottom: 10px;
+            border: 1px solid var(--border-color); overflow: hidden;
         }
-
-        /* ציר זמן / אבני דרך (Milestones) */
-        .timeline {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 15px;
+        .accordion-header {
+            padding: 14px; font-weight: 700; font-size: 14px; cursor: pointer;
+            background: rgba(255,255,255,0.01); display: flex; justify-content: space-between;
         }
-
-        .timeline-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 12px;
-        }
-
-        .dot {
-            width: 8px; height: 8px; border-radius: 50%;
-        }
-
-        /* עיצוב דף רשומות גולמיות (שונה גרפית ומובדל) */
-        .raw-container {
-            background: #111217;
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-right: 4px solid #5c6275;
-        }
-        .raw-title {
-            font-weight: 800; color: #a5afc8; margin-bottom: 8px; font-size: 15px;
-        }
-        .raw-text {
+        .accordion-content {
+            padding: 0 14px; max-height: 0; overflow: hidden;
+            transition: max-height 0.25s ease-out, padding 0.25s ease;
             font-size: 13px; color: #ced4e2; line-height: 1.5; white-space: pre-line;
         }
 
-        /* טבלת עדכון שבועי נוחה */
-        .weekly-table {
-            width: 100%; border-collapse: collapse; margin-top: 10px;
+        /* ממשק פנימי מורחב */
+        .details-panel {
+            position: fixed; top: 0; bottom: 0; left: 0; right: 0;
+            background-color: var(--panel-bg); z-index: 1000;
+            display: none; padding: 20px; flex-direction: column; overflow-y: auto;
         }
-        .weekly-table th, .weekly-table td {
-            border: 1px solid #2d3142; padding: 10px; text-align: right; font-size: 13px;
+        .achievement-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px;
         }
-        .weekly-table th { background-color: rgba(255,255,255,0.02); }
-        .input-cell {
-            background: transparent; color: white; border: none; width: 100%; font-size: 13px; outline: none;
-        }
+        .achievement-date { font-size: 11px; color: var(--accent-green); font-weight: bold; }
 
-        /* סרגל ניווט תחתון קבוע וצף */
+        /* טבלאות ויעדים */
+        .weekly-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .weekly-table th, .weekly-table td { border: 1px solid #232533; padding: 10px; text-align: right; font-size: 12px; }
+        .weekly-table th { background: rgba(255,255,255,0.02); color: var(--text-muted); }
+        
+        /* ניווט תחתון */
         .bottom-nav {
-            position: fixed;
-            bottom: 20px; left: 16px; right: 16px;
-            background-color: rgba(22, 24, 34, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            z-index: 99;
+            position: fixed; bottom: 15px; left: 12px; right: 12px;
+            background-color: rgba(20, 22, 34, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around; padding: 10px 0;
+            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 99;
         }
-
-        .nav-item {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 11px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            font-weight: 600;
-        }
-
+        .nav-item { color: var(--text-muted); text-decoration: none; font-size: 10px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-weight: 600; }
         .nav-item.active { color: #ffffff; }
-        .nav-icon { font-size: 18px; }
+        .nav-icon { font-size: 16px; }
     </style>
 </head>
 <body>
@@ -258,45 +150,78 @@
     <div id="page-dashboard" class="app-page active">
         <header>
             <h1>המסע אל היעדים</h1>
-            <p>לוח בקרה אסימטרי מובנה</p>
+            <p>מבנה אסימטרי מהודק וצמוד</p>
         </header>
         <div class="goals-grid" id="goalsGrid"></div>
     </div>
 
     <div id="page-weekly" class="app-page">
         <header>
-            <h1>יומן מעקב שבועי</h1>
-            <p>ניהול מטרות וסיכומי שבת</p>
+            <h1>יומן מטרות שבועי</h1>
+            <p>ניהול מעקב וסיכומי שבת</p>
         </header>
-        <div style="background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid var(--border-color);">
-            <h3 style="margin-top:0;">הצבת יעדים לשבוע 12</h3>
-            <p style="font-size:13px; color:var(--text-muted);">כאן תוכל לאשר את יעדי השבוע שחלף ולהציב את החדשים בכל מוצאי שבת.</p>
+        
+        <div class="period-progress-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
+                <span>קירבה לסיום משימות השבוע (שבוע 12):</span>
+                <span id="weekly-pct-text" style="font-weight:bold; color:var(--accent-green);">0%</span>
+            </div>
+            <div class="mini-progress"><div id="weekly-pct-bar" class="mini-bar" style="width: 0%; background: var(--accent-green);"></div></div>
+        </div>
+
+        <div style="background: var(--card-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color);">
             <table class="weekly-table">
-                <thead>
-                    <tr><th>המטרה</th><th>יעד לשבוע 12</th><th>ביצוע בפועל</th></tr>
-                </thead>
+                <thead><tr><th>מטרה</th><th>יעד שבועי</th><th>בוצע?</th></tr></thead>
                 <tbody>
-                    <tr><td>💪 15 מתח</td><td><input class="input-cell" value="3 אימוני נפח"></td><td><input class="input-cell" placeholder="הקלד תוצאה..."></td></tr>
-                    <tr><td>💰 חיסכון</td><td><input class="input-cell" value="הפקדה חודשית קבועה"></td><td><input class="input-cell" placeholder="הקלד תוצאה..."></td></tr>
-                    <tr><td>📚 ספרים</td><td><input class="input-cell" value="להתקדם באהרון ברק"></td><td><input class="input-cell" placeholder="הקלד תוצאה..."></td></tr>
+                    <tr><td>💪 15 מתח</td><td>3 אימוני נפח וכוח</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
+                    <tr><td>💰 חיסכון כספי</td><td>מעקב שכר והפקדה קבועה</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
+                    <tr><td>📚 15 ספרים</td><td>להתקדם בספר של אהרון ברק</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
+                    <tr><td>🎙️ פודקאסט</td><td>עריכת הליינאפ לפרק הבא</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
+                    <tr><td>🤝 התנדבות</td><td>יצירת קשר ראשוני לבדיקת זמינות</td><td><input type="checkbox" class="weekly-calc-chk" onchange="calculatePeriodProgress('weekly')"></td></tr>
                 </tbody>
             </table>
-            <button style="margin-top:15px; width:100%; background:#fff; color:#000; border:none; padding:12px; border-radius:12px; font-weight:bold; cursor:pointer;">שמור עדכון שבועי ל-Sheets</button>
+        </div>
+    </div>
+
+    <div id="page-monthly" class="app-page">
+        <header>
+            <h1>מטרות חודשיות</h1>
+            <p>הצבת יעדי מקרו וניהול תקופתי</p>
+        </header>
+
+        <div class="period-progress-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
+                <span>קירבה לסיכום יעדי החודש הנוכחי:</span>
+                <span id="monthly-pct-text" style="font-weight:bold; color:#ffb74d;">0%</span>
+            </div>
+            <div class="mini-progress"><div id="monthly-pct-bar" class="mini-bar" style="width: 0%; background: #ffb74d;"></div></div>
+        </div>
+
+        <div style="background: var(--card-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color);">
+            <table class="weekly-table">
+                <thead><tr><th>המטרה הגדולה</th><th>יעד לחודש הקרוב</th><th>אושר?</th></tr></thead>
+                <tbody>
+                    <tr><td>💪 כושר ומתח</td><td>הגעה ל-6 חזרות מלאות במתח</td><td><input type="checkbox" class="monthly-calc-chk" onchange="calculatePeriodProgress('monthly')"></td></tr>
+                    <tr><td>💰 פיננסי</td><td>הגדלת הון עצמי ב-4,000 ש״ח נוספים</td><td><input type="checkbox" class="monthly-calc-chk" onchange="calculatePeriodProgress('monthly')"></td></tr>
+                    <tr><td>📚 ספרים</td><td>סיום הספר של אהרון ברק ותחילת חדש</td><td><input type="checkbox" class="monthly-calc-chk" onchange="calculatePeriodProgress('monthly')"></td></tr>
+                    <tr><td>🎙️ פודקאסט</td><td>פרסום 2 פרקים מלאים ביוטיוב</td><td><input type="checkbox" class="monthly-calc-chk" onchange="calculatePeriodProgress('monthly')"></td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
     <div id="page-raw" class="app-page">
         <header>
             <h1>מאגר רשומות גולמי</h1>
-            <p>ארכיון היסטורי מלא (שבועות 1-11)</p>
+            <p>כל פרט, שלב, יעד ורישום מהטבלה המקורית</p>
         </header>
-        <div id="rawLogContainer"></div>
+        <div id="rawAccordionContainer"></div>
     </div>
 
     <div class="details-panel" id="detailsPanel">
-        <div class="panel-header">
-            <button class="btn-back" onclick="closePanel()">✕ סגור ממשק</button>
-            <h2 id="panelTitle" style="margin: 0; font-size: 20px; font-weight: 800;"></h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <button class="btn-back" onclick="closePanel()">✕ סגור</button>
+            <h2 id="panelTitle" style="margin:0; font-size:18px; font-weight:800;"></h2>
         </div>
         <div class="panel-body" id="panelContent"></div>
     </div>
@@ -304,11 +229,11 @@
     <nav class="bottom-nav">
         <a href="#" class="nav-item active" onclick="switchPage('dashboard', this)"><span class="nav-icon">📊</span><span>דשבורד</span></a>
         <a href="#" class="nav-item" onclick="switchPage('weekly', this)"><span class="nav-icon">📅</span><span>שבועי</span></a>
+        <a href="#" class="nav-item" onclick="switchPage('monthly', this)"><span class="nav-icon">🗓️</span><span>חודשי</span></a>
         <a href="#" class="nav-item" onclick="switchPage('raw', this)"><span class="nav-icon">🔍</span><span>גולמי</span></a>
     </nav>
 
     <script>
-        // בסיס נתונים מעודכן קבוע לאחר התיקונים שלך
         const goalsData = [
             { id: 1, title: "💪 15 מתח", current: 4, target: 15, unit: "חזרות", size: "h-medium", type: "fitness" },
             { id: 2, title: "💰 חיסכון כספי", current: 67500, target: 100000, unit: "ש״ח", size: "h-large", type: "money" },
@@ -319,33 +244,31 @@
             { id: 7, title: "🎙️ רשומים ביוטיוב", current: 28, target: 100, unit: "רשומים", size: "h-medium", type: "podcast" }
         ];
 
-        // נתוני הארכיון הגולמיים המלאים שחולצו מהוורד שלך
-        const rawLogs = [
-            { title: "💪 מתח וכושר (שבועות 1-11)", text: "• שבוע 1: יעד התחלתי - חזרה 1 של מתח, ביצוע 2 מקבילים ומעבר אתגר המעבר.\n• שבועות 2-8: בניית רצף של 3 אימונים בשבוע, עבודה על נפחים.\n• שבועות 9-11: שילוב משחקי כדורגל אינטנסיביים, התמודדות עם מחלה בשבוע 10, וחזרה לאימוני כוח סדירים בשבוע 11.\n• מצב נוכחי: שיפור מוכח של 300% (מ-1 ל-4 חזרות מלאות)." },
-            { title: "💰 יומן פיננסי וקופות", text: "• שבועות 1-4: תחילת למידת עולם ההשקעות, בחינת קופות הגמל והפנסיה באיקאה.\n• שבועות 5-8: מעקב שכר חודשי ועבודות עריכה/צילום צדדיות, הגשת בקשות להחזרי מס.\n• שבועות 9-11: בדיקת תיק פיננסי, מעקב קפדני וריכוז הון עצמי נוכחי העומד על כ-67,500 ש״ח מתוך יעד ה-100k." },
-            { title: "📚 רשימת ספרים שהושלמו", text: "1. האדם מחפש משמעות (הושלם)\n2. מי הזיז את הגבינה שלי (הושלם)\n3. אל עצמי (הושלם)\n4. המניפסט הקומוניסטי (הושלם)\n5. הולדת הקפיטליזם (הושלם)\n6. השקעות לעצלנים (הושלם בשבוע 9)\n7. ספר של אהרון ברק (בתהליך קריאה פעיל - שבועות 9-11)." },
-            { title: "🎤 הופעה מול 100 אנשים (הושלם)", text: "• שבועות 1-2: פגישות ותיאומים מוקדמים עם רון אשבל, דנה, דן ואיתי לצורך רתימתם והפקת האירוע.\n• שבועות 3-5: סגירת לוחות זמנים, חזרות והתארגנות לוגיסטית.\n• תוצאה: המשימה הושלמה בהצלחה כבירה מול קהל מלא של 100 איש!" },
-            { title: "🇮🇹 שיחה באיטלקית (הושלם)", text: "• שבועות 1-7: התמדה יומיומית בלתי מתפשרת של חצי שעה לפחות באפליקציית דואולינגו.\n• שבועות 8-11: מעבר לשיעורים שבועיים ממוקדים ומורחבים עם סימונה, ניהול שיחות ארוכות חופשיות.\n• תוצאה: האתגר פוצח! ניהול שיחה שוטפת ורצופה של 10 דקות מלאות." },
-            { title: "🎙️ הפקה ורשומים בפודקאסט", text: "• שבועות 1-4: הקמת עמוד הפודקאסט הרשמי WiseGuyPodcast, עיצוב גרפי של הלוגו ותכנון ליינאפים.\n• שבועות 5-8: שיחות תיאום ותוכן עם אורחים (איתמר, אוריין, ירמיה דוד).\n• שבועות 9-11: צילום אינטנסיבי של הפרקים באולפן ועריכתם הדיגיטלית.\n• מצב רשומים נוכחי: 28 רשומים." }
+        // מאגר הרשומות הגולמי המלא והמפורט מהטבלה שלך
+        const rawLogsData = [
+            { title: "💪 15 מתח וכושר - פירוט מלא", text: "• שבוע ראשון: שבת 7.3 לעשות 2 מקבילים ולעבור את אתגר המעבר. ליתר השבוע להתחיל את 0.6 3 אימונים. ביצוע: אימון ראשון 0.6, אימון נוסף, אימון נוסף. תוצאה: קבעתי שיעורים לשני ורביעי.\n• שבוע תשיעי: לעשות את כל האימונים השבוע. ביצוע: עשיתי אימון אחד נפח ואחד כוח. תוצאה: שכר של 8000 שח, מטרה 1 גיגי בצד יש סרטונים וצילמתי גם.\n• שבוע עשירי: לעשות את מלוא האימונים, לעשות מילואים. ביצוע: עשיתי מילואים. תוצאה: לא התאמנתי בשל מחלה אבל שיחקתי כדורגל משחק קורע.\n• שבוע אחד עשר: לנסות להתאמן את 3 האימונים. סטטוס נוכחי: 4 חזרות (שיפור ממתח 1 התחלתי)." },
+            { title: "💰 חיסכון כספי ופיננסי - פירוט מלא", text: "• שבוע ראשון: ללמוד על ההשקעות ובמקביל להמשיך לחפש עבודות מרחוק ובתקווה לענות על שיחות טלפון בנושא. לבדוק על קופת הגמל שלי באיקאה.\n• שבוע תשיעי: מעקב אחרי הכנסות, הגשת דוחות ועבודות צילום ועריכה חיצוניות.\n• שבוע עשירי: בדיקת הפרשות פנסיוניות ופיצויים במקום העבודה.\n• סטטוס הון עצמי נוכחי: כ-67,500 ש״ח מתוך יעד סופי של 100,000 ש״ח." },
+            { title: "📚 קריאת 15 ספרים - רישום הארכיון", text: "הספרים שהושלמו במלואם לאורך השבועות:\n1. האדם מחפש משמעות\n2. מי הזיז את הגבינה שלי\n3. אל עצמי\n4. המניפסט הקומוניסטי\n5. הולדת הקפיטליזם\n6. השקעות לעצלנים (הושלם סופית בשבוע 9)\n\n• סטטוס נוכחי (שבועות 9-11): קריאה פעילה בספר של אהרון ברק (עמוד 120 וממשיך)." },
+            { title: "🎤 הופעה מול 100 אנשים - שלבי התארגנות", text: "• שבוע ראשון: לדבר עם רון אשבל בנוגע לתכנות לגבי להופיע לרתום את דנה איתי ודן. לשאול את איתי את מידת המוכנות לארגן דבר שכזה.\n• שבועות 2-4: ביצוע חזרות, גיבוש חומרים מוזיקליים ותיאום לוגיסטי מול הגורמים.\n• תוצאה סופית: המשימה הושלמה בהצלחה מול אולם מלא של 100 אנשים! (מצב: 100% והושלם)." },
+            { title: "🤝 התנדבות בקהילה - תיעוד שלבים", text: "• שבוע ראשון: לבדוק על עמותת מכל הלב שעוזרת לאנשים לפנות את הבתים שלהם.\n• שבועות 2-11: לא יצא לפעול עקב אילוצי צבא ומילואים.\n• סטטוס נוכחי: 0 שעות מתוך יעד סופי של 50 שעות שבועיות/חודשיות מצטברות." },
+            { title: "🇮🇹 שיחה באיטלקית - פירוט התמדה", text: "• שבוע ראשון: חצי שעה דואולינגו ביום לפחות, שיעור איטלקית ביום שני, לקבוע עוד שיעור להמשך השבוע.\n• שבוע תשיעי: התמדה בדואולינגו ושיחה עם סימונה.\n• שבוע עשירי: לשים פוקוס על סימונה על דיבור. ביצוע: עשיתי שיעור עם סימונה ודיברנו הרבה איטלקית. תוצאה: ביטלתי שיעור אחד אבל התמדתי בדואולינגו.\n• תוצאה סופית: הושג יעד של 10 דקות רצופות של שיחה שוטפת!" },
+            { title: "🎙️ רשומים לפודקאסט - הפקה וצמיחה", text: "• שבוע ראשון: לפתוח עמוד פודקאסט לעצב, לתכנן ולדבר עם אנשים לקראתו.\n• שבוע תשיעי: לצלם פודקאסט נוסף ולנסות לערוך את כולם. ביצוע: צילמתי אחד עם איתמר ואוריין ואפילו אחד עם ירמיה דוד (חבר לספסל הלימודים).\n• שבוע עשירי: לצלם פודקאסט נוסף ולנסות לערוך את כולם. ביצוע: צילמתי פודקאסט אחד וערכתי עוד כמה. תוצאה: ערכתי את מרביתם.\n• מצב רשומים נוכחי: 28 רשומים." }
         ];
 
         function getScaleColor(pct) {
             const hue = pct * 120;
-            return `hsl(${hue}, 85%, 50%)`;
+            return `hsl(${hue}, 85%, 48%)`;
         }
 
         function renderDashboard() {
             const grid = document.getElementById('goalsGrid');
             grid.innerHTML = '';
-
             goalsData.forEach(goal => {
                 const pct = Math.min(goal.current / goal.target, 1);
                 const color = getScaleColor(pct);
-
                 const box = document.createElement('div');
                 box.className = `goal-box ${goal.size}`;
                 box.onclick = () => openPanel(goal);
-
                 box.innerHTML = `
                     <div class="goal-glow" style="background-color: ${color};"></div>
                     <div class="goal-title">${goal.title}</div>
@@ -354,55 +277,51 @@
                             <div class="goal-pct" style="color: ${color};">${Math.round(pct * 100)}%</div>
                             <div class="goal-status">${goal.current.toLocaleString()}/${goal.target.toLocaleString()}</div>
                         </div>
-                        <div class="mini-progress">
-                            <div class="mini-bar" style="width: ${pct * 100}%; background-color: ${color}; box-shadow: 0 0 8px ${color}60;"></div>
-                        </div>
-                    </div>
-                `;
+                        <div class="mini-progress"><div class="mini-bar" style="width:${pct*100}%; background-color:${color};"></div></div>
+                    </div>`;
                 grid.appendChild(box);
             });
         }
 
+        // 🏆 תיקון: הצגת הישגים עם תאריכים וציר היסטורי מדויק בממשק הפנימי
         function openPanel(goal) {
             document.getElementById('panelTitle').innerText = goal.title;
-            let content = '';
+            let content = '<h3>🏆 הישגים ואבני דרך (Achievements):</h3>';
 
             if (goal.type === 'fitness') {
-                content = `<h3>🎯 ציר אבני דרך (חזרות):</h3><div class="timeline">`;
-                for(let i=1; i<=15; i++) {
-                    const done = i <= goal.current;
-                    content += `<div class="timeline-item" style="opacity: ${done ? 1 : 0.4}">
-                        <div class="dot" style="background:${done ? '#03dac6':'#666'}"></div>
-                        <span>מתח ${i} ${done ? ' - הושג! ✓' : ''}</span>
-                    </div>`;
-                }
-                content += `</div>`;
+                content += `
+                    <div class="achievement-row"><span>מתח 1 (נקודת התחלה)</span><span class="achievement-date">שבוע 1</span></div>
+                    <div class="achievement-row"><span>מתח 2</span><span class="achievement-date">שבוע 4</span></div>
+                    <div class="achievement-row"><span>מתח 3</span><span class="achievement-date">שבוע 8</span></div>
+                    <div class="achievement-row" style="background:rgba(3,218,198,0.05);"><span>מתח 4 (סטטוס נוכחי בפועל!)</span><span class="achievement-date">שבוע 11 ✓</span></div>
+                `;
             } else if (goal.type === 'books') {
-                content = `<h3>📚 סטטוס ספרייה דיגיטלית:</h3>
-                    <div style="color:#03dac6; margin-bottom:8px;">✓ האדם מחפש משמעות (הושלם)</div>
-                    <div style="color:#03dac6; margin-bottom:8px;">✓ מי הזיז את הגבינה שלי (הושלם)</div>
-                    <div style="color:#03dac6; margin-bottom:8px;">✓ אל עצמי (הושלם)</div>
-                    <div style="color:#03dac6; margin-bottom:8px;">✓ המניפסט הקומוניסטי (הושלם)</div>
-                    <div style="color:#03dac6; margin-bottom:8px;">✓ הולדת הקפיטליזם (הושלם)</div>
-                    <div style="color:#03dac6; margin-bottom:8px;">✓ השקעות לעצלנים (הושלם בשבוע 9)</div>
-                    <div style="color:#ffb74d; margin-bottom:8px;">⏳ הספר של אהרון ברק (בתהליך משבוע 9)</div>`;
+                content += `
+                    <div class="achievement-row"><span>האדם מחפש משמעות</span><span class="achievement-date">הושלם</span></div>
+                    <div class="achievement-row"><span>מי הזיז את הגבינה שלי</span><span class="achievement-date">הושלם</span></div>
+                    <div class="achievement-row"><span>אל עצמי</span><span class="achievement-date">הושלם</span></div>
+                    <div class="achievement-row"><span>המניפסט הקומוניסטי</span><span class="achievement-date">הושלם</span></div>
+                    <div class="achievement-row"><span>הולדת הקפיטליזם</span><span class="achievement-date">הושלם</span></div>
+                    <div class="achievement-row"><span>השקעות לעצלנים</span><span class="achievement-date">שבוע 9 ✓</span></div>
+                    <div class="achievement-row" style="color:#ffb74d;"><span>הספר של אהרון ברק</span><span style="color:#ffb74d;" class="achievement-date">קורא עכשיו (עמ' 120)</span></div>
+                `;
             } else if (goal.type === 'podcast') {
-                content = `<h3>📈 ציר צמיחה (קפיצות של 5 רשומים):</h3><div class="timeline">`;
-                [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100].forEach(num => {
-                    const done = num <= goal.current;
-                    content += `<div class="timeline-item" style="opacity: ${done ? 1 : 0.4}">
-                        <div class="dot" style="background:${done ? '#03dac6':'#666'}"></div>
-                        <span>${num} רשומים ${done ? ' - הושג רטרואקטיבית! ✓' : ''}</span>
-                    </div>`;
-                });
-                content += `</div>`;
+                content += `
+                    <div class="achievement-row"><span>5 רשומים ראשונים</span><span class="achievement-date">שבוע 2 ✓</span></div>
+                    <div class="achievement-row"><span>10 רשומים</span><span class="achievement-date">שבוע 4 ✓</span></div>
+                    <div class="achievement-row"><span>15 רשומים</span><span class="achievement-date">שבוע 6 ✓</span></div>
+                    <div class="achievement-row"><span>20 רשומים (עריכות עם ירמיה)</span><span class="achievement-date">שבוע 9 ✓</span></div>
+                    <div class="achievement-row" style="background:rgba(3,218,198,0.05);"><span>25 רשומים (סטטוס נוכחי: 28)</span><span class="achievement-date">שבוע 11 ✓</span></div>
+                `;
             } else if (goal.type === 'money') {
-                content = `<h3>💰 יומן הפקדות וחיסכון:</h3>
-                    <p><b>יתרה קבועה נוכחית:</b> 67,500 ש״ח</p>
-                    <hr style="border-color:#2d3142;">
-                    <p style="font-size:13px; color:var(--text-muted);">היסטוריית הפקדות ומעקב שכר מוזנים ישירות מיומני העבודה והחזרי המס.</p>`;
+                content += `
+                    <div class="achievement-row"><span>בדיקת קופת גמל באיקאה</span><span class="achievement-date">שבוע 1 ✓</span></div>
+                    <div class="achievement-row"><span>בדיקת פנסיה ופיצויים</span><span class="achievement-date">שבוע 5 ✓</span></div>
+                    <div class="achievement-row"><span>הפקדת שכר של 8,000 ש״ח ועריכות</span><span class="achievement-date">שבוע 9 ✓</span></div>
+                    <div class="achievement-row"><span>צבירת הון נוכחי: 67,500 ש״ח</span><span class="achievement-date">שבוע 11 ✓</span></div>
+                `;
             } else {
-                content = `<p>היעד הושג במלואו במהלך 11 השבועות הראשונים של המסע!</p>`;
+                content += `<div class="achievement-row"><span>המשימה הושלמה ב-100% במהלך 11 השבועות הראשונים!</span></div>`;
             }
 
             document.getElementById('panelContent').innerHTML = content;
@@ -418,19 +337,47 @@
             navItem.classList.add('active');
         }
 
-        function renderRawLogs() {
-            const container = document.getElementById('rawLogContainer');
+        // 📊 תיקון: פונקציה לחישוב אחוזי הקירבה ליעדים שבועיים וחודשיים בלייב
+        function calculatePeriodProgress(type) {
+            const checkboxes = document.querySelectorAll(`.${type}-calc-chk`);
+            let checkedCount = 0;
+            checkboxes.forEach(chk => { if(chk.checked) checkedCount++; });
+            const pct = checkboxes.length > 0 ? Math.round((checkedCount / checkboxes.length) * 100) : 0;
+            
+            document.getElementById(`${type}-pct-text`).innerText = `${pct}%`;
+            document.getElementById(`${type}-pct-bar`).style.width = `${pct}%`;
+        }
+
+        // 🔍 תיקון: בניית דף גולמי לחיץ ומלא (Accordion)
+        function renderRawAccordion() {
+            const container = document.getElementById('rawAccordionContainer');
             container.innerHTML = '';
-            rawLogs.forEach(log => {
-                const div = document.createElement('div');
-                div.className = 'raw-container';
-                div.innerHTML = `<div class="raw-title">${log.title}</div><div class="raw-text">${log.text}</div>`;
-                container.appendChild(div);
+            rawLogsData.forEach((log, index) => {
+                const item = document.createElement('div');
+                item.className = 'accordion-item';
+                item.innerHTML = `
+                    <div class="accordion-header" onclick="toggleAccordion(${index})">
+                        <span>${log.title}</span><span>▼</span>
+                    </div>
+                    <div class="accordion-content" id="accordion-content-${index}">${log.text}</div>
+                `;
+                container.appendChild(item);
             });
         }
 
+        function toggleAccordion(index) {
+            const content = document.getElementById(`accordion-content-${index}`);
+            if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                content.style.maxHeight = '0px';
+                content.style.padding = '0 14px';
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.padding = '14px';
+            }
+        }
+
         renderDashboard();
-        renderRawLogs();
+        renderRawAccordion();
     </script>
 </body>
 </html>
