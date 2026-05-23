@@ -228,21 +228,31 @@
             }, 1000);
         }
 
-        async function fetchCloudData() {
-            try {
-                const response = await fetch(CLOUD_API_URL);
-                localData = await response.json();
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('app-content').style.display = 'block';
-                
-                renderDashboard();
-                renderPeriodAccordions('weekly');
-                renderPeriodAccordions('monthly');
-                renderRawAccordion();
-            } catch (err) {
-                document.getElementById('loading').innerText = "❌ שגיאה בסנכרון. ודא שביצעת פריסה מחדש.";
-                console.error(err);
+       function fetchCloudData() {
+    // 🔥 שימוש בטכניקת JSONP חסינת חסימות דפדפן
+    const script = document.createElement('script');
+    script.src = CLOUD_API_URL + "?callback=handleCloudResponse";
+    
+    // הגדרת הגנת קריסה במקרה של שגיאה
+    script.onerror = function() {
+        document.getElementById('loading').innerText = "❌ שגיאה בחיבור לענן. ודא שביצעת פריסה מחדש בגוגל שיטס.";
+    };
+    
+    document.body.appendChild(script);
+}
+
+// הפונקציה שמקבלת את הנתונים ומעירה את האפליקציה מיד
+function handleCloudResponse(response) {
+    localData = response;
+    
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
+    
+    renderDashboard();
+    renderPeriodAccordions('weekly');
+    renderPeriodAccordions('monthly');
+    renderRawAccordion();
+}
             }
         }
 
