@@ -66,8 +66,8 @@
         .goal-glow { position: absolute; bottom: -30px; left: -30px; right: -30px; height: 60px; filter: blur(20px); opacity: 0.12; pointer-events: none; }
         .goal-title { font-weight: 700; font-size: 14px; color: #fff; margin-bottom: 6px; }
         
-        .goal-live-res { font-size: 11px; color: #ced4e2; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; margin-bottom: 8px; }
-        .goal-live-date { font-size: 9px; color: var(--text-muted); font-weight: bold; margin-bottom: 4px; }
+        /* סגנון למטרה השבועית הנוכחית שמוצגת בריבוע */
+        .goal-live-weekly-target { font-size: 11px; color: #ced4e2; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; margin-bottom: 8px; }
 
         .goal-footer { display: flex; flex-direction: column; gap: 4px; margin-top: auto; width: 100%; }
         .goal-status-row { display: flex; justify-content: space-between; align-items: flex-end; }
@@ -112,16 +112,7 @@
         .badge-w { background: rgba(3, 218, 198, 0.15); color: var(--accent-green); }
         .badge-m { background: rgba(255, 183, 77, 0.15); color: var(--accent-orange); }
 
-        .log-card-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px; font-weight: bold; color: var(--accent-green); }
-        .log-section-title { font-size: 11px; color: var(--text-muted); font-weight: bold; margin-top: 6px; margin-bottom: 2px; }
-
-        .bottom-nav {
-            position: fixed; bottom: 15px; left: 12px; right: 12px; background-color: rgba(20, 22, 34, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            display: flex; justify-content: space-around; padding: 10px 0; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 99;
-        }
-        .nav-item { color: var(--text-muted); text-decoration: none; font-size: 10px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-weight: 600; }
-        .nav-item.active { color: #ffffff; }
-        .nav-icon { font-size: 16px; }
+        .log-card-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px; font-weight: bold; color: var(--accent-green); }
     </style>
 </head>
 <body>
@@ -222,7 +213,7 @@
             var script = document.createElement('script');
             script.src = CLOUD_API_URL + "?callback=handleCloudResponse";
             script.onerror = function() {
-                document.getElementById('loading').innerText = "❌ שגיאה בסנכרון. וดא שביצעת פריסה מחדש (New Version) בשרת של גוגל.";
+                document.getElementById('loading').innerText = "❌ שגיאה בסנכרון. ודא שביצעת פריסה מחדש (New Version) בשרת של גוגל.";
             };
             document.body.appendChild(script);
         }
@@ -237,15 +228,12 @@
             renderRawAccordion();
         }
 
-        function getLatestLogForCategory(categoryName) {
-            var logs = localData.rawLogs.filter(function(l) {
-                return l.category.toLowerCase().trim() === categoryName.toLowerCase().trim();
+        // פונקציית עזר למציאת המטרה השבועית הפעילה מלשונית Weekly
+        function getWeeklyTargetText(goalId) {
+            var found = localData.weekly.find(function(w) {
+                return parseInt(getInsensitiveKey(w, 'goalid')) === parseInt(goalId);
             });
-            if (logs.length === 0) return { res: "אין תיעוד תוצאה עדיין", date: "" };
-            return {
-                res: logs[logs.length - 1].textRes || "אין תיעוד תוצאה עדיין",
-                date: logs[logs.length - 1].date || ""
-            };
+            return found ? getInsensitiveKey(found, 'periodtarget') : "אין יעד שבועי מוגדר";
         }
 
         function renderDashboard() {
@@ -276,15 +264,16 @@
                 if(title.includes("הופעה")) categoryKey = "הופעה מול קהל";
                 if(title.includes("איטלקית")) categoryKey = "איטלקית";
 
-                var latestLog = getLatestLogForCategory(categoryKey);
+                // 🔥 תיקון 1: הריבוע מושך כעת את ה-Weekly Target העדכני ביותר מלשונית Weekly
+                var weeklyTargetText = getWeeklyTargetText(id);
 
                 var box = document.createElement('div');
                 box.className = "goal-box " + sizeClass;
                 box.onclick = function() { openPanel(title, categoryKey); };
+                
                 box.innerHTML = '<div class="goal-glow" style="background-color: ' + color + ';"></div>' +
                     '<div class="goal-title">' + title + '</div>' +
-                    '<div class="goal-live-res">' + latestLog.res + '</div>' +
-                    (latestLog.date ? '<div class="goal-live-date">תאריך: ' + latestLog.date + '</div>' : '') +
+                    '<div class="goal-live-weekly-target">' + weeklyTargetText + '</div>' +
                     '<div class="goal-footer">' +
                         '<div class="goal-status-row">' +
                             '<div class="goal-pct" style="color: ' + color + ';">' + Math.round(pct * 100) + '%</div>' +
@@ -317,7 +306,7 @@
                         '<div class="input-block">' +
                             '<div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:#ffb74d;">🎯 הצבת מטרות לתקופה הבאה (Text):</div>' +
                             '<input type="text" id="text-' + uniqueId + '" class="text-input-cell" style="margin-bottom:8px; border-color: rgba(255,183,77,0.3);" placeholder="מה אני מתכנן לעשות בהמשך...">' +
-                            '<div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:var(--accent-green);">🏃 תיעוד גולמי חופשי לתקופה הנוכחית:</div>' +
+                            '<div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:var(--accent-green);">1. תיעוד גולמי חופשי לתקופה הנוכחית:</div>' +
                             '<input type="text" id="done-' + uniqueId + '" class="text-input-cell" style="margin-bottom:6px;" placeholder="מה עשיתי עד כה (TextDone)...">' +
                             '<input type="text" id="res-' + uniqueId + '" class="text-input-cell" placeholder="תוצאות שהושגו (TextRes)...">' +
                             '<div style="font-weight: bold; font-size: 12px; margin-top:8px; margin-bottom:4px; color:#a5afc8;">📊 עדכון סטטיסטיקה כללי (לדשבורד):</div>' +
@@ -405,28 +394,26 @@
 
         function openPanel(title, categoryKey) {
             document.getElementById('panelTitle').innerText = title;
+            
+            // 🔥 משיכת הרשומות מתוך ה-RawLogs
             var filteredLogs = localData.rawLogs.filter(function(l) {
                 return l.category.toLowerCase().trim() === categoryKey.toLowerCase().trim();
             });
             
-            var content = '<h3>🏆 היסטוריית רשומות מה-Sheets:</h3>';
+            var content = '<h3>🏆 ארכיון תוצאות והישגים:</h3>';
             if(filteredLogs.length === 0) {
                 content += '<p style="font-size:12px; color:var(--text-muted);">אין תיעוד זמין.</p>';
             } else {
+                // 🔥 תיקון 2: הצגת הרשומות מהישן ביותר לחדש ביותר, כולל מספר שבוע/תאריך ותוצאה בלבד!
                 filteredLogs.forEach(function(log) {
                     var isWeekly = log.periodType !== "חודשי";
                     var badgeClass = isWeekly ? "badge-w" : "badge-m";
                     var badgeText = isWeekly ? "שבועי" : "חודשי";
 
-                    content += '<div class="log-card-item">' +
+                    content += '<div class="log-card-item" style="padding-top: 20px;">' +
                             '<span class="log-badge ' + badgeClass + '">' + badgeText + '</span>' +
                             '<div class="log-card-header"><span>📅 ' + log.date + '</span></div>' +
-                            '<div class="log-section-title">🎯 מטרה שהוצבה:</div>' +
-                            '<div style="color:#ffb74d;">' + (log.text || '-') + '</div>' +
-                            '<div class="log-section-title">🏃 מה עשיתי עד כה:</div>' +
-                            '<div style="color:#ced4e2;">' + (log.textDone || '-') + '</div>' +
-                            '<div class="log-section-title">🏆 תוצאות שהושגו:</div>' +
-                            '<div style="color:var(--accent-green); font-weight:500;">' + (log.textRes || '-') + '</div>' +
+                            '<div style="color:var(--accent-green); font-weight:500; font-size:13px; margin-top:4px;">' + (log.textRes || '-') + '</div>' +
                         '</div>';
                 });
             }
@@ -460,12 +447,12 @@
                         var isWeekly = log.periodType !== "חודשי";
                         var badgeClass = isWeekly ? "badge-w" : "badge-m";
                         var badgeText = isWeekly ? "שבועי" : "חודשי";
-                        htmlContent += '<div class="log-card-item" style="background: rgba(0,0,0,0.15); margin-bottom:8px;">' +
+                        
+                        // 🔥 תיקון 2 בגולמי: ניקוי פנימי, הצגה כרונולוגית מבוססת תאריך ותוצאה בלבד
+                        htmlContent += '<div class="log-card-item" style="background: rgba(0,0,0,0.15); margin-bottom:8px; padding-top:20px;">' +
                                 '<span class="log-badge ' + badgeClass + '" style="top:8px; left:8px;">' + badgeText + '</span>' +
                                 '<div class="log-card-header"><span>' + log.date + '</span></div>' +
-                                '<div style="margin-top:4px;"><b style="color:#ffb74d; font-size:11px;">מטרה:</b> ' + log.text + '</div>' +
-                                '<div style="margin-top:4px;"><b style="color:var(--text-muted); font-size:11px;">מה נעשה:</b> ' + log.textDone + '</div>' +
-                                '<div style="margin-top:4px;"><b style="color:var(--accent-green); font-size:11px;">תוצאה:</b> ' + log.textRes + '</div>' +
+                                '<div style="margin-top:4px;"><b style="color:var(--accent-green); font-size:11px;">תוצאה שהושגה:</b> ' + log.textRes + '</div>' +
                             '</div>';
                     });
                 }
