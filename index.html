@@ -222,7 +222,7 @@
             var script = document.createElement('script');
             script.src = CLOUD_API_URL + "?callback=handleCloudResponse";
             script.onerror = function() {
-                document.getElementById('loading').innerText = "❌ שגיאה בסנכרון. ודא שביצעת פריסה מחדש (New Version) בשרת של גוגל.";
+                document.getElementById('loading').innerText = "❌ שגיאה בסנכרון. וดא שביצעת פריסה מחדש (New Version) בשרת של גוגל.";
             };
             document.body.appendChild(script);
         }
@@ -281,8 +281,6 @@
                 var box = document.createElement('div');
                 box.className = "goal-box " + sizeClass;
                 box.onclick = function() { openPanel(title, categoryKey); };
-                
-                // 🛠️ תיקון 1: הורדנו את ״מה עשיתי עד כה״ מהריבועים בדשבורד! מציג רק תוצאות
                 box.innerHTML = '<div class="goal-glow" style="background-color: ' + color + ';"></div>' +
                     '<div class="goal-title">' + title + '</div>' +
                     '<div class="goal-live-res">' + latestLog.res + '</div>' +
@@ -310,8 +308,6 @@
                 
                 var card = document.createElement('div');
                 card.className = 'accordion-item';
-                
-                // 🛠️ תיקון 2: הוספת שדה קלט להצבת מטרות לתקופה הבאה (עמודת Text)
                 card.innerHTML = '<div class="accordion-header" onclick="toggleLocalAccordion(\'' + uniqueId + '\')">' +
                         '<span>' + goalTitle + '</span><span id="arrow-' + uniqueId + '">▼</span>' +
                     '</div>' +
@@ -367,7 +363,7 @@
                 category: category,
                 date: dateStr,
                 goalTitle: goalTitle,
-                text: txtPlan || "לא הוגדרה מטרה חדשה", // מזין את שדה הטקסט שהוגדר
+                text: txtPlan || "לא הוגדרה מטרה חדשה", 
                 textDone: txtDone || "לא תועד שינוי",
                 textRes: txtRes || "לא תועד שינוי",
                 updateNumericValue: numVal,
@@ -375,7 +371,7 @@
             };
 
             try {
-                alert("שומר בענן גוגל...");
+                alert("מזרים ומסנכרן בין כל חלקי המערכת...");
                 await fetch(CLOUD_API_URL, {
                     method: "POST",
                     mode: "no-cors",
@@ -393,7 +389,7 @@
                 document.getElementById("res-" + uniqueId).value = '';
                 document.getElementById("num-" + uniqueId).value = '';
                 
-                alert("הסנכרון הושלם בהצלחה!");
+                alert("הסנכרון הדו-כיווני הושלם בהצלחה! הלשוניות עודכנו.");
                 fetchCloudData(); 
             } catch(err) { alert("שגיאה בתקשורת."); }
         }
