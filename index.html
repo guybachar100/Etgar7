@@ -101,7 +101,7 @@
         .details-panel {
             position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: var(--panel-bg); z-index: 1000; display: none; padding: 20px; flex-direction: column; overflow-y: auto;
         }
-        .btn-back { background-color: #1e202e; color: var(--text-main); border: 1px solid #2d3142; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
+        .btn-back { background-color: #1e202e; color: var(--text-main); border: 1px solid #2d3142; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
         .panel-body { background-color: var(--card-bg); border-radius: 24px; padding: 20px; border: 1px solid var(--border-color); }
         
         .log-card-item {
@@ -252,7 +252,6 @@
             var grid = document.getElementById('goalsGrid');
             grid.innerHTML = '';
             
-            // תיקון פונקציית המיון לתחביר ES5 פשוט וחסין לינטר של גיטהאב
             var sortedDashboard = localData.dashboard.slice().sort(function(a, b) {
                 var idA = parseInt(getInsensitiveKey(a, 'id')) || 0;
                 var idB = parseInt(getInsensitiveKey(b, 'id')) || 0;
@@ -282,6 +281,8 @@
                 var box = document.createElement('div');
                 box.className = "goal-box " + sizeClass;
                 box.onclick = function() { openPanel(title, categoryKey); };
+                
+                // 🛠️ תיקון 1: הורדנו את ״מה עשיתי עד כה״ מהריבועים בדשבורד! מציג רק תוצאות
                 box.innerHTML = '<div class="goal-glow" style="background-color: ' + color + ';"></div>' +
                     '<div class="goal-title">' + title + '</div>' +
                     '<div class="goal-live-res">' + latestLog.res + '</div>' +
@@ -309,17 +310,21 @@
                 
                 var card = document.createElement('div');
                 card.className = 'accordion-item';
+                
+                // 🛠️ תיקון 2: הוספת שדה קלט להצבת מטרות לתקופה הבאה (עמודת Text)
                 card.innerHTML = '<div class="accordion-header" onclick="toggleLocalAccordion(\'' + uniqueId + '\')">' +
                         '<span>' + goalTitle + '</span><span id="arrow-' + uniqueId + '">▼</span>' +
                     '</div>' +
                     '<div class="accordion-content" id="content-' + uniqueId + '">' +
-                        '<div style="margin-bottom: 4px; font-weight: bold; color: var(--text-muted);">היעד שהוצב:</div>' +
+                        '<div style="margin-bottom: 4px; font-weight: bold; color: var(--text-muted);">היעד הנוכחי:</div>' +
                         '<div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size:13px;">' + periodTarget + '</div>' +
                         '<div class="input-block">' +
-                            '<div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:var(--accent-green);">1. תיעוד גולמי חופשי:</div>' +
+                            '<div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:#ffb74d;">🎯 הצבת מטרות לתקופה הבאה (Text):</div>' +
+                            '<input type="text" id="text-' + uniqueId + '" class="text-input-cell" style="margin-bottom:8px; border-color: rgba(255,183,77,0.3);" placeholder="מה אני מתכנן לעשות בהמשך...">' +
+                            '<div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:var(--accent-green);">🏃 תיעוד גולמי חופשי לתקופה הנוכחית:</div>' +
                             '<input type="text" id="done-' + uniqueId + '" class="text-input-cell" style="margin-bottom:6px;" placeholder="מה עשיתי עד כה (TextDone)...">' +
                             '<input type="text" id="res-' + uniqueId + '" class="text-input-cell" placeholder="תוצאות שהושגו (TextRes)...">' +
-                            '<div style="font-weight: bold; font-size: 12px; margin-top:8px; margin-bottom:4px; color:#ffb74d;">2. עדכון סטטיסטיקה (לדשבורד):</div>' +
+                            '<div style="font-weight: bold; font-size: 12px; margin-top:8px; margin-bottom:4px; color:#a5afc8;">📊 עדכון סטטיסטיקה כללי (לדשבורד):</div>' +
                             '<input type="number" id="num-' + uniqueId + '" class="text-input-cell" placeholder="הקלד ערך מספרי עדכני כללי (Current)...">' +
                             '<button class="action-btn" style="background: ' + (period === 'weekly' ? 'var(--accent-green)' : '#ffb74d') + '" onclick="processAndSend(\'' + period + '\', ' + index + ', \'' + goalTitle + '\', \'' + uniqueId + '\')">שמור וסנכרן לענן ✓</button>' +
                         '</div>' +
@@ -336,11 +341,12 @@
         }
 
         async function processAndSend(period, index, goalTitle, uniqueId) {
+            var txtPlan = document.getElementById("text-" + uniqueId).value.trim();
             var txtDone = document.getElementById("done-" + uniqueId).value.trim();
             var txtRes = document.getElementById("res-" + uniqueId).value.trim();
             var numVal = document.getElementById("num-" + uniqueId).value.trim();
 
-            if(!txtDone && !txtRes && !numVal) {
+            if(!txtPlan && !txtDone && !txtRes && !numVal) {
                 alert("אנא מלא לפחות שדה אחד לפני השמירה!");
                 return;
             }
@@ -361,7 +367,7 @@
                 category: category,
                 date: dateStr,
                 goalTitle: goalTitle,
-                text: (period === 'weekly' ? 'יעד שבועי' : 'יעד חודשי'), 
+                text: txtPlan || "לא הוגדרה מטרה חדשה", // מזין את שדה הטקסט שהוגדר
                 textDone: txtDone || "לא תועד שינוי",
                 textRes: txtRes || "לא תועד שינוי",
                 updateNumericValue: numVal,
@@ -382,6 +388,7 @@
                 if(period === 'monthly') monthlyDoneMap[index] = true;
                 updatePeriodUIPercentages(period);
                 
+                document.getElementById("text-" + uniqueId).value = '';
                 document.getElementById("done-" + uniqueId).value = '';
                 document.getElementById("res-" + uniqueId).value = '';
                 document.getElementById("num-" + uniqueId).value = '';
@@ -418,6 +425,8 @@
                     content += '<div class="log-card-item">' +
                             '<span class="log-badge ' + badgeClass + '">' + badgeText + '</span>' +
                             '<div class="log-card-header"><span>📅 ' + log.date + '</span></div>' +
+                            '<div class="log-section-title">🎯 מטרה שהוצבה:</div>' +
+                            '<div style="color:#ffb74d;">' + (log.text || '-') + '</div>' +
                             '<div class="log-section-title">🏃 מה עשיתי עד כה:</div>' +
                             '<div style="color:#ced4e2;">' + (log.textDone || '-') + '</div>' +
                             '<div class="log-section-title">🏆 תוצאות שהושגו:</div>' +
@@ -458,6 +467,7 @@
                         htmlContent += '<div class="log-card-item" style="background: rgba(0,0,0,0.15); margin-bottom:8px;">' +
                                 '<span class="log-badge ' + badgeClass + '" style="top:8px; left:8px;">' + badgeText + '</span>' +
                                 '<div class="log-card-header"><span>' + log.date + '</span></div>' +
+                                '<div style="margin-top:4px;"><b style="color:#ffb74d; font-size:11px;">מטרה:</b> ' + log.text + '</div>' +
                                 '<div style="margin-top:4px;"><b style="color:var(--text-muted); font-size:11px;">מה נעשה:</b> ' + log.textDone + '</div>' +
                                 '<div style="margin-top:4px;"><b style="color:var(--accent-green); font-size:11px;">תוצאה:</b> ' + log.textRes + '</div>' +
                             '</div>';
