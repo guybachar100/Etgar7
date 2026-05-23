@@ -101,7 +101,7 @@
         .details-panel {
             position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: var(--panel-bg); z-index: 1000; display: none; padding: 20px; flex-direction: column; overflow-y: auto;
         }
-        .btn-back { background-color: #1e202e; color: var(--text-main); border: 1px solid #2d3142; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn-back { background-color: #1e202e; color: var(--text-main); border: 1px solid #2d3142; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
         .panel-body { background-color: var(--card-bg); border-radius: 24px; padding: 20px; border: 1px solid var(--border-color); }
         
         .log-card-item {
@@ -197,20 +197,20 @@
 
         function getInsensitiveKey(obj, keyName) {
             if (!obj) return "";
-            const target = keyName.toLowerCase().trim();
-            for (let k in obj) { if (k.toLowerCase().trim() === target) return obj[k]; }
+            var target = keyName.toLowerCase().trim();
+            for (var k in obj) { if (k.toLowerCase().trim() === target) return obj[k]; }
             return "";
         }
 
         function startPizzaTimer() {
-            const startDate = new Date("2026-03-08T00:00:00").getTime();
-            setInterval(() => {
-                const now = new Date().getTime();
-                const difference = now - startDate;
-                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            var startDate = new Date("2026-03-08T00:00:00").getTime();
+            setInterval(function() {
+                var now = new Date().getTime();
+                var difference = now - startDate;
+                var days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((difference % (1000 * 60)) / 1000);
                 document.getElementById("t-days").innerText = days < 10 ? "0" + days : days;
                 document.getElementById("t-hours").innerText = hours < 10 ? "0" + hours : hours;
                 document.getElementById("t-mins").innerText = minutes < 10 ? "0" + minutes : minutes;
@@ -218,9 +218,8 @@
             }, 1000);
         }
 
-        // שימוש במנגנון JSONP עוקף חסימות אבטחה של דפדפנים
         function fetchCloudData() {
-            const script = document.createElement('script');
+            var script = document.createElement('script');
             script.src = CLOUD_API_URL + "?callback=handleCloudResponse";
             script.onerror = function() {
                 document.getElementById('loading').innerText = "❌ שגיאה בסנכרון. ודא שביצעת פריסה מחדש (New Version) בשרת של גוגל.";
@@ -228,7 +227,6 @@
             document.body.appendChild(script);
         }
 
-        // הפונקציה שמופעלת מיד ברגע שגוגל מחזיר את התשובה
         function handleCloudResponse(response) {
             localData = response;
             document.getElementById('loading').style.display = 'none';
@@ -240,7 +238,9 @@
         }
 
         function getLatestLogForCategory(categoryName) {
-            const logs = localData.rawLogs.filter(l => l.category.toLowerCase().trim() === categoryName.toLowerCase().trim());
+            var logs = localData.rawLogs.filter(function(l) {
+                return l.category.toLowerCase().trim() === categoryName.toLowerCase().trim();
+            });
             if (logs.length === 0) return { res: "אין תיעוד תוצאה עדיין", date: "" };
             return {
                 res: logs[logs.length - 1].textRes || "אין תיעוד תוצאה עדיין",
@@ -249,21 +249,27 @@
         }
 
         function renderDashboard() {
-            const grid = document.getElementById('goalsGrid');
+            var grid = document.getElementById('goalsGrid');
             grid.innerHTML = '';
-            const sortedDashboard = [...localData.dashboard].sort((a,b) => parseInt(getInsensitiveKey(a, 'id')) - parseInt(getInsensitiveKey(b, 'id')));
+            
+            // תיקון פונקציית המיון לתחביר ES5 פשוט וחסין לינטר של גיטהאב
+            var sortedDashboard = localData.dashboard.slice().sort(function(a, b) {
+                var idA = parseInt(getInsensitiveKey(a, 'id')) || 0;
+                var idB = parseInt(getInsensitiveKey(b, 'id')) || 0;
+                return idA - idB;
+            });
 
-            sortedDashboard.forEach(goal => {
-                const id = getInsensitiveKey(goal, 'id');
-                const title = getInsensitiveKey(goal, 'title');
-                const current = parseFloat(getInsensitiveKey(goal, 'current')) || 0;
-                const target = parseFloat(getInsensitiveKey(goal, 'target')) || 1;
-                const unit = getInsensitiveKey(goal, 'unit');
-                const pct = Math.min(current / target, 1);
-                const color = `hsl(${pct * 120}, 85%, 48%)`;
-                const sizeClass = sizeMapping[id] || "h-medium";
+            sortedDashboard.forEach(function(goal) {
+                var id = getInsensitiveKey(goal, 'id');
+                var title = getInsensitiveKey(goal, 'title');
+                var current = parseFloat(getInsensitiveKey(goal, 'current')) || 0;
+                var target = parseFloat(getInsensitiveKey(goal, 'target')) || 1;
+                var unit = getInsensitiveKey(goal, 'unit');
+                var pct = Math.min(current / target, 1);
+                var color = "hsl(" + (pct * 120) + ", 85%, 48%)";
+                var sizeClass = sizeMapping[id] || "h-medium";
 
-                let categoryKey = "כושר ומתח";
+                var categoryKey = "כושר ומתח";
                 if(title.includes("חיסכון") || title.includes("כסף")) categoryKey = "פיננסי וחיסכון";
                 if(title.includes("ספרים")) categoryKey = "ספרים";
                 if(title.includes("פודקאסט") || title.includes("רשומים")) categoryKey = "פודקאסט";
@@ -271,80 +277,78 @@
                 if(title.includes("הופעה")) categoryKey = "הופעה מול קהל";
                 if(title.includes("איטלקית")) categoryKey = "איטלקית";
 
-                const latestLog = getLatestLogForCategory(categoryKey);
+                var latestLog = getLatestLogForCategory(categoryKey);
 
-                const box = document.createElement('div');
-                box.className = `goal-box ${sizeClass}`;
-                box.onclick = () => openPanel(title, categoryKey);
-                box.innerHTML = `
-                    <div class="goal-glow" style="background-color: ${color};"></div>
-                    <div class="goal-title">${title}</div>
-                    <div class="goal-live-res">${latestLog.res}</div>
-                    ${latestLog.date ? `<div class="goal-live-date">תאריך: ${latestLog.date}</div>` : ''}
-                    <div class="goal-footer">
-                        <div class="goal-status-row">
-                            <div class="goal-pct" style="color: ${color};">${Math.round(pct * 100)}%</div>
-                            <div class="goal-status">${current.toLocaleString()}/${target.toLocaleString()} ${unit}</div>
-                        </div>
-                        <div class="mini-progress"><div class="mini-bar" style="width:${pct*100}%; background-color:${color};"></div></div>
-                    </div>`;
+                var box = document.createElement('div');
+                box.className = "goal-box " + sizeClass;
+                box.onclick = function() { openPanel(title, categoryKey); };
+                box.innerHTML = '<div class="goal-glow" style="background-color: ' + color + ';"></div>' +
+                    '<div class="goal-title">' + title + '</div>' +
+                    '<div class="goal-live-res">' + latestLog.res + '</div>' +
+                    (latestLog.date ? '<div class="goal-live-date">תאריך: ' + latestLog.date + '</div>' : '') +
+                    '<div class="goal-footer">' +
+                        '<div class="goal-status-row">' +
+                            '<div class="goal-pct" style="color: ' + color + ';">' + Math.round(pct * 100) + '%</div>' +
+                            '<div class="goal-status">' + current.toLocaleString() + ' / ' + target.toLocaleString() + ' ' + unit + '</div>' +
+                        '</div>' +
+                        '<div class="mini-progress"><div class="mini-bar" style="width:' + (pct*100) + '%; background-color:' + color + ';"></div></div>' +
+                    '</div>';
                 grid.appendChild(box);
             });
         }
 
         function renderPeriodAccordions(period) {
-            const container = document.getElementById(`${period}AccordionContainer`);
+            var container = document.getElementById(period + "AccordionContainer");
             container.innerHTML = '';
-            const list = period === 'weekly' ? localData.weekly : localData.monthly;
+            var list = period === 'weekly' ? localData.weekly : localData.monthly;
 
-            list.forEach((item, index) => {
-                const goalTitle = getInsensitiveKey(item, 'goaltitle');
-                const periodTarget = getInsensitiveKey(item, 'periodtarget');
-                const uniqueId = `${period}-${index}`;
+            list.forEach(function(item, index) {
+                var goalTitle = getInsensitiveKey(item, 'goaltitle');
+                var periodTarget = getInsensitiveKey(item, 'periodtarget');
+                var uniqueId = period + "-" + index;
                 
-                const card = document.createElement('div');
+                var card = document.createElement('div');
                 card.className = 'accordion-item';
-                card.innerHTML = `
-                    <div class="accordion-header" onclick="toggleLocalAccordion('${uniqueId}')">
-                        <span>${goalTitle}</span><span id="arrow-${uniqueId}">▼</span>
-                    </div>
-                    <div class="accordion-content" id="content-${uniqueId}">
-                        <div style="margin-bottom: 4px; font-weight: bold; color: var(--text-muted);">היעד שהוצב:</div>
-                        <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size:13px;">${periodTarget}</div>
-                        <div class="input-block">
-                            <div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:var(--accent-green);">1. תיעוד גולמי חופשי:</div>
-                            <input type="text" id="done-${uniqueId}" class="text-input-cell" style="margin-bottom:6px;" placeholder="מה עשיתי עד כה (TextDone)...">
-                            <input type="text" id="res-${uniqueId}" class="text-input-cell" placeholder="תוצאות שהושגו (TextRes)...">
-                            <div style="font-weight: bold; font-size: 12px; margin-top:8px; margin-bottom:4px; color:#ffb74d;">2. עדכון סטטיסטיקה (לדשבורד):</div>
-                            <input type="number" id="num-${uniqueId}" class="text-input-cell" placeholder="הקלד ערך מספרי עדכני כללי (Current)...">
-                            <button class="action-btn" style="background: ${period === 'weekly' ? 'var(--accent-green)' : '#ffb74d'}" onclick="processAndSend('${period}', ${index}, '${goalTitle}', '${uniqueId}')">שמור וסנכרן לענן ✓</button>
-                        </div>
-                    </div>`;
+                card.innerHTML = '<div class="accordion-header" onclick="toggleLocalAccordion(\'' + uniqueId + '\')">' +
+                        '<span>' + goalTitle + '</span><span id="arrow-' + uniqueId + '">▼</span>' +
+                    '</div>' +
+                    '<div class="accordion-content" id="content-' + uniqueId + '">' +
+                        '<div style="margin-bottom: 4px; font-weight: bold; color: var(--text-muted);">היעד שהוצב:</div>' +
+                        '<div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size:13px;">' + periodTarget + '</div>' +
+                        '<div class="input-block">' +
+                            '<div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:var(--accent-green);">1. תיעוד גולמי חופשי:</div>' +
+                            '<input type="text" id="done-' + uniqueId + '" class="text-input-cell" style="margin-bottom:6px;" placeholder="מה עשיתי עד כה (TextDone)...">' +
+                            '<input type="text" id="res-' + uniqueId + '" class="text-input-cell" placeholder="תוצאות שהושגו (TextRes)...">' +
+                            '<div style="font-weight: bold; font-size: 12px; margin-top:8px; margin-bottom:4px; color:#ffb74d;">2. עדכון סטטיסטיקה (לדשבורד):</div>' +
+                            '<input type="number" id="num-' + uniqueId + '" class="text-input-cell" placeholder="הקלד ערך מספרי עדכני כללי (Current)...">' +
+                            '<button class="action-btn" style="background: ' + (period === 'weekly' ? 'var(--accent-green)' : '#ffb74d') + '" onclick="processAndSend(\'' + period + '\', ' + index + ', \'' + goalTitle + '\', \'' + uniqueId + '\')">שמור וסנכרן לענן ✓</button>' +
+                        '</div>' +
+                    '</div>';
                 container.appendChild(card);
             });
         }
 
         function toggleLocalAccordion(id) {
-            const content = document.getElementById(`content-${id}`);
-            const arrow = document.getElementById(`arrow-${id}`);
+            var content = document.getElementById("content-" + id);
+            var arrow = document.getElementById("arrow-" + id);
             content.classList.toggle('open');
             arrow.innerText = content.classList.contains('open') ? '▲' : '▼';
         }
 
         async function processAndSend(period, index, goalTitle, uniqueId) {
-            const txtDone = document.getElementById(`done-${uniqueId}`).value.trim();
-            const txtRes = document.getElementById(`res-${uniqueId}`).value.trim();
-            const numVal = document.getElementById(`num-${uniqueId}`).value.trim();
+            var txtDone = document.getElementById("done-" + uniqueId).value.trim();
+            var txtRes = document.getElementById("res-" + uniqueId).value.trim();
+            var numVal = document.getElementById("num-" + uniqueId).value.trim();
 
             if(!txtDone && !txtRes && !numVal) {
                 alert("אנא מלא לפחות שדה אחד לפני השמירה!");
                 return;
             }
 
-            const now = new Date();
-            const dateStr = `${now.getDate()}.${now.getMonth()+1}.${now.getFullYear()}`;
+            var now = new Date();
+            var dateStr = now.getDate() + "." + (now.getMonth()+1) + "." + now.getFullYear();
 
-            let category = "כושר ומתח";
+            var category = "כושר ומתח";
             if(goalTitle.includes("חיסכון") || goalTitle.includes("כסף") || goalTitle.includes("פיננסי")) category = "פיננסי וחיסכון";
             if(goalTitle.includes("ספרים")) category = "ספרים";
             if(goalTitle.includes("פודקאסט") || goalTitle.includes("רשומים")) category = "פודקאסט";
@@ -352,12 +356,12 @@
             if(goalTitle.includes("הופעה")) category = "הופעה מול קהל";
             if(goalTitle.includes("איטלקית")) category = "איטלקית";
 
-            const payload = {
+            var payload = {
                 action: "completeTask",
                 category: category,
                 date: dateStr,
                 goalTitle: goalTitle,
-                text: `${period === 'weekly' ? 'יעד שבועי' : 'יעד חודשי'}`, 
+                text: (period === 'weekly' ? 'יעד שבועי' : 'יעד חודשי'), 
                 textDone: txtDone || "לא תועד שינוי",
                 textRes: txtRes || "לא תועד שינוי",
                 updateNumericValue: numVal,
@@ -378,9 +382,9 @@
                 if(period === 'monthly') monthlyDoneMap[index] = true;
                 updatePeriodUIPercentages(period);
                 
-                document.getElementById(`done-${uniqueId}`).value = '';
-                document.getElementById(`res-${uniqueId}`).value = '';
-                document.getElementById(`num-${uniqueId}`).value = '';
+                document.getElementById("done-" + uniqueId).value = '';
+                document.getElementById("res-" + uniqueId).value = '';
+                document.getElementById("num-" + uniqueId).value = '';
                 
                 alert("הסנכרון הושלם בהצלחה!");
                 fetchCloudData(); 
@@ -388,36 +392,37 @@
         }
 
         function updatePeriodUIPercentages(period) {
-            const map = period === 'weekly' ? weeklyDoneMap : monthlyDoneMap;
-            const total = period === 'weekly' ? localData.weekly.length : localData.monthly.length;
-            const checked = Object.keys(map).length;
-            const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
-            document.getElementById(`${period}-pct-text`).innerText = `${pct}%`;
-            document.getElementById(`${period}-pct-bar`).style.width = `${pct}%`;
+            var map = period === 'weekly' ? weeklyDoneMap : monthlyDoneMap;
+            var total = period === 'weekly' ? localData.weekly.length : localData.monthly.length;
+            var checked = Object.keys(map).length;
+            var pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+            document.getElementById(period + "-pct-text").innerText = pct + "%";
+            document.getElementById(period + "-pct-bar").style.width = pct + "%";
         }
 
         function openPanel(title, categoryKey) {
             document.getElementById('panelTitle').innerText = title;
-            const filteredLogs = localData.rawLogs.filter(l => l.category.toLowerCase().trim() === categoryKey.toLowerCase().trim());
+            var filteredLogs = localData.rawLogs.filter(function(l) {
+                return l.category.toLowerCase().trim() === categoryKey.toLowerCase().trim();
+            });
             
-            let content = '<h3>🏆 היסטוריית רשומות מה-Sheets:</h3>';
+            var content = '<h3>🏆 היסטוריית רשומות מה-Sheets:</h3>';
             if(filteredLogs.length === 0) {
-                content += `<p style="font-size:12px; color:var(--text-muted);">אין תיעוד זמין.</p>`;
+                content += '<p style="font-size:12px; color:var(--text-muted);">אין תיעוד זמין.</p>';
             } else {
-                filteredLogs.forEach(log => {
-                    const isWeekly = log.periodType !== "חודשי";
-                    const badgeClass = isWeekly ? "badge-w" : "badge-m";
-                    const badgeText = isWeekly ? "שבועי" : "חודשי";
+                filteredLogs.forEach(function(log) {
+                    var isWeekly = log.periodType !== "חודשי";
+                    var badgeClass = isWeekly ? "badge-w" : "badge-m";
+                    var badgeText = isWeekly ? "שבועי" : "חודשי";
 
-                    content += `
-                        <div class="log-card-item">
-                            <span class="log-badge ${badgeClass}">${badgeText}</span>
-                            <div class="log-card-header"><span>📅 ${log.date}</span></div>
-                            <div class="log-section-title">🏃 מה עשיתי עד כה:</div>
-                            <div style="color:#ced4e2;">${log.textDone || '-'}</div>
-                            <div class="log-section-title">🏆 תוצאות שהושגו:</div>
-                            <div style="color:var(--accent-green); font-weight:500;">${log.textRes || '-'}</div>
-                        </div>`;
+                    content += '<div class="log-card-item">' +
+                            '<span class="log-badge ' + badgeClass + '">' + badgeText + '</span>' +
+                            '<div class="log-card-header"><span>📅 ' + log.date + '</span></div>' +
+                            '<div class="log-section-title">🏃 מה עשיתי עד כה:</div>' +
+                            '<div style="color:#ced4e2;">' + (log.textDone || '-') + '</div>' +
+                            '<div class="log-section-title">🏆 תוצאות שהושגו:</div>' +
+                            '<div style="color:var(--accent-green); font-weight:500;">' + (log.textRes || '-') + '</div>' +
+                        '</div>';
                 });
             }
             document.getElementById('panelContent').innerHTML = content;
@@ -427,50 +432,50 @@
         function closePanel() { document.getElementById('detailsPanel').style.display = 'none'; }
 
         function switchPage(pageId, navItem) {
-            document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(`page-${pageId}`).classList.add('active');
+            document.querySelectorAll('.app-page').forEach(function(p) { p.classList.remove('active'); });
+            document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+            document.getElementById("page-" + pageId).classList.add('active');
             navItem.classList.add('active');
         }
 
         function renderRawAccordion() {
-            const container = document.getElementById('rawAccordionContainer');
+            var container = document.getElementById('rawAccordionContainer');
             container.innerHTML = '';
-            const categories = ["כושר ומתח", "פיננסי וחיסכון", "ספרים", "הופעה מול קהל", "התנדבות", "איטלקית", "פודקאסט"];
+            var categories = ["כושר ומתח", "פיננסי וחיסכון", "ספרים", "הופעה מול קהל", "התנדבות", "איטלקית", "פודקאסט"];
             
-            categories.forEach((cat, index) => {
-                const logs = localData.rawLogs.filter(l => l.category.toLowerCase().trim() === cat.toLowerCase().trim());
-                let htmlContent = '';
+            categories.forEach(function(cat, index) {
+                var logs = localData.rawLogs.filter(function(l) {
+                    return l.category.toLowerCase().trim() === cat.toLowerCase().trim();
+                });
+                var htmlContent = '';
                 if(logs.length === 0) {
-                    htmlContent = `<div style="padding:10px; color:var(--text-muted);">אין רשומות גולמיות זמינות.</div>`;
+                    htmlContent = '<div style="padding:10px; color:var(--text-muted);">אין רשומות גולמיות זמינות.</div>';
                 } else {
-                    logs.forEach(log => {
-                        const isWeekly = log.periodType !== "חודשי";
-                        const badgeClass = isWeekly ? "badge-w" : "badge-m";
-                        const badgeText = isWeekly ? "שבועי" : "חודשי";
-                        htmlContent += `
-                            <div class="log-card-item" style="background: rgba(0,0,0,0.15); margin-bottom:8px;">
-                                <span class="log-badge ${badgeClass}" style="top:8px; left:8px;">${badgeText}</span>
-                                <div class="log-card-header"><span>${log.date}</span></div>
-                                <div style="margin-top:4px;"><b style="color:var(--text-muted); font-size:11px;">מה נעשה:</b> ${log.textDone}</div>
-                                <div style="margin-top:4px;"><b style="color:var(--accent-green); font-size:11px;">תוצאה:</b> ${log.textRes}</div>
-                            </div>`;
+                    logs.forEach(function(log) {
+                        var isWeekly = log.periodType !== "חודשי";
+                        var badgeClass = isWeekly ? "badge-w" : "badge-m";
+                        var badgeText = isWeekly ? "שבועי" : "חודשי";
+                        htmlContent += '<div class="log-card-item" style="background: rgba(0,0,0,0.15); margin-bottom:8px;">' +
+                                '<span class="log-badge ' + badgeClass + '" style="top:8px; left:8px;">' + badgeText + '</span>' +
+                                '<div class="log-card-header"><span>' + log.date + '</span></div>' +
+                                '<div style="margin-top:4px;"><b style="color:var(--text-muted); font-size:11px;">מה נעשה:</b> ' + log.textDone + '</div>' +
+                                '<div style="margin-top:4px;"><b style="color:var(--accent-green); font-size:11px;">תוצאה:</b> ' + log.textRes + '</div>' +
+                            '</div>';
                     });
                 }
-                const item = document.createElement('div');
+                var item = document.createElement('div');
                 item.className = 'accordion-item';
-                item.innerHTML = `
-                    <div class="accordion-header" onclick="toggleRawAccordion(${index})">
-                        <span>${cat}</span><span id="raw-arrow-${index}">▼</span>
-                    </div>
-                    <div class="accordion-content" id="raw-content-${index}">${htmlContent}</div>`;
+                item.innerHTML = '<div class="accordion-header" onclick="toggleRawAccordion(' + index + ')">' +
+                        '<span>' + cat + '</span><span id="raw-arrow-' + index + '">▼</span>' +
+                    '</div>' +
+                    '<div class="accordion-content" id="raw-content-' + index + '">' + htmlContent + '</div>';
                 container.appendChild(item);
             });
         }
 
         function toggleRawAccordion(index) {
-            const content = document.getElementById(`raw-content-${index}`);
-            const arrow = document.getElementById(`raw-arrow-${index}`);
+            var content = document.getElementById("raw-content-" + index);
+            var arrow = document.getElementById("raw-arrow-" + index);
             content.classList.toggle('open');
             arrow.innerText = content.classList.contains('open') ? '▲' : '▼';
         }
