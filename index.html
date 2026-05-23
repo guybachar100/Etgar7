@@ -66,7 +66,6 @@
         .goal-glow { position: absolute; bottom: -30px; left: -30px; right: -30px; height: 60px; filter: blur(20px); opacity: 0.12; pointer-events: none; }
         .goal-title { font-weight: 700; font-size: 14px; color: #fff; margin-bottom: 6px; }
         
-        /* סגנון למטרה השבועית הנוכחית שמוצגת בריבוע */
         .goal-live-weekly-target { font-size: 11px; color: #ced4e2; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; margin-bottom: 8px; }
 
         .goal-footer { display: flex; flex-direction: column; gap: 4px; margin-top: auto; width: 100%; }
@@ -113,6 +112,20 @@
         .badge-m { background: rgba(255, 183, 77, 0.15); color: var(--accent-orange); }
 
         .log-card-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px; font-weight: bold; color: var(--accent-green); }
+
+        /* 🔥 הסטייל היוקרתי והמתוקן של כפתורי הניווט התחתון החזיר מעמד! */
+        .bottom-nav {
+            position: fixed; bottom: 15px; left: 12px; right: 12px; 
+            background-color: rgba(20, 22, 34, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around; padding: 12px 0; border-radius: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 99;
+        }
+        .nav-item { 
+            color: var(--text-muted); text-decoration: none; font-size: 10px; 
+            display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 600;
+        }
+        .nav-item.active { color: #ffffff; }
+        .nav-icon { font-size: 16px; }
     </style>
 </head>
 <body>
@@ -228,7 +241,6 @@
             renderRawAccordion();
         }
 
-        // פונקציית עזר למציאת המטרה השבועית הפעילה מלשונית Weekly
         function getWeeklyTargetText(goalId) {
             var found = localData.weekly.find(function(w) {
                 return parseInt(getInsensitiveKey(w, 'goalid')) === parseInt(goalId);
@@ -264,13 +276,11 @@
                 if(title.includes("הופעה")) categoryKey = "הופעה מול קהל";
                 if(title.includes("איטלקית")) categoryKey = "איטלקית";
 
-                // 🔥 תיקון 1: הריבוע מושך כעת את ה-Weekly Target העדכני ביותר מלשונית Weekly
                 var weeklyTargetText = getWeeklyTargetText(id);
 
                 var box = document.createElement('div');
                 box.className = "goal-box " + sizeClass;
                 box.onclick = function() { openPanel(title, categoryKey); };
-                
                 box.innerHTML = '<div class="goal-glow" style="background-color: ' + color + ';"></div>' +
                     '<div class="goal-title">' + title + '</div>' +
                     '<div class="goal-live-weekly-target">' + weeklyTargetText + '</div>' +
@@ -394,8 +404,6 @@
 
         function openPanel(title, categoryKey) {
             document.getElementById('panelTitle').innerText = title;
-            
-            // 🔥 משיכת הרשומות מתוך ה-RawLogs
             var filteredLogs = localData.rawLogs.filter(function(l) {
                 return l.category.toLowerCase().trim() === categoryKey.toLowerCase().trim();
             });
@@ -404,7 +412,6 @@
             if(filteredLogs.length === 0) {
                 content += '<p style="font-size:12px; color:var(--text-muted);">אין תיעוד זמין.</p>';
             } else {
-                // 🔥 תיקון 2: הצגת הרשומות מהישן ביותר לחדש ביותר, כולל מספר שבוע/תאריך ותוצאה בלבד!
                 filteredLogs.forEach(function(log) {
                     var isWeekly = log.periodType !== "חודשי";
                     var badgeClass = isWeekly ? "badge-w" : "badge-m";
@@ -447,8 +454,6 @@
                         var isWeekly = log.periodType !== "חודשי";
                         var badgeClass = isWeekly ? "badge-w" : "badge-m";
                         var badgeText = isWeekly ? "שבועי" : "חודשי";
-                        
-                        // 🔥 תיקון 2 בגולמי: ניקוי פנימי, הצגה כרונולוגית מבוססת תאריך ותוצאה בלבד
                         htmlContent += '<div class="log-card-item" style="background: rgba(0,0,0,0.15); margin-bottom:8px; padding-top:20px;">' +
                                 '<span class="log-badge ' + badgeClass + '" style="top:8px; left:8px;">' + badgeText + '</span>' +
                                 '<div class="log-card-header"><span>' + log.date + '</span></div>' +
