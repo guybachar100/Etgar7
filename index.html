@@ -76,7 +76,6 @@
         .accordion-content.open { padding: 16px; max-height: max-content; overflow: visible; }
 
         .input-block { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .input-row-double { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .text-input-cell {
             background: #1a1c28; color: #fff; border: 1px solid #2d3142;
             padding: 10px; border-radius: 8px; font-size: 13px; outline: none; width: 100%; box-sizing: border-box;
@@ -89,7 +88,6 @@
         .btn-back { background-color: #1e202e; color: var(--text-main); border: 1px solid #2d3142; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
         .panel-body { background-color: var(--card-bg); border-radius: 24px; padding: 20px; border: 1px solid var(--border-color); }
         
-        /* עיצוב כרטיסיות הלוג המפורטות */
         .log-card-item {
             background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
             border-radius: 12px; padding: 14px; margin-bottom: 12px; font-size: 13px;
@@ -114,7 +112,7 @@
         <div id="page-dashboard" class="app-page active">
             <header>
                 <h1>המסע אל היעדים</h1>
-                <p>מחובר לענן גוגל - עדכון סטטיסטיקות חיים</p>
+                <p>מבנה אסימטרי מסודר - מחובר לענן גוגל</p>
             </header>
             <div class="goals-grid" id="goalsGrid"></div>
         </div>
@@ -182,6 +180,18 @@
 
         const sizeMapping = { 1: "h-medium", 2: "h-large", 3: "h-large", 4: "h-small", 5: "h-small", 6: "h-small", 7: "h-medium" };
 
+        // פונקציית עזר חכמה שמוצאת ערך באובייקט ללא תלות באותיות גדולות/קטנות
+        function getInsensitiveKey(obj, keyName) {
+            if (!obj) return "";
+            const target = keyName.toLowerCase().trim();
+            for (let k in obj) {
+                if (k.toLowerCase().trim() === target) {
+                    return obj[k];
+                }
+            }
+            return "";
+        }
+
         async function fetchCloudData() {
             try {
                 const response = await fetch(CLOUD_API_URL);
@@ -207,25 +217,27 @@
         function renderDashboard() {
             const grid = document.getElementById('goalsGrid');
             grid.innerHTML = '';
-            
-            // מיון קבוע להבטחת אסתטיקה אסימטרית יציבה
-            const sortedDashboard = [...localData.dashboard].sort((a,b) => (a.ID == 4) ? -1 : 1);
 
             localData.dashboard.forEach(goal => {
-                // המרה מדויקת למספרים למניעת באגים ברישום האחוזים
-                const current = parseFloat(goal.Current) || 0;
-                const target = parseFloat(goal.Target) || 1;
-                const unit = goal.Unit || '';
+                // שימוש במנגנון החסין לקריאת הנתונים מהשדות של גוגל
+                const id = getInsensitiveKey(goal, 'id');
+                const title = getInsensitiveKey(goal, 'title');
+                const currentVal = getInsensitiveKey(goal, 'current');
+                const targetVal = getInsensitiveKey(goal, 'target');
+                const unit = getInsensitiveKey(goal, 'unit');
+
+                const current = parseFloat(currentVal) || 0;
+                const target = parseFloat(targetVal) || 1;
                 const pct = Math.min(current / target, 1);
                 const color = getScaleColor(pct);
-                const sizeClass = sizeMapping[goal.ID] || "h-medium";
+                const sizeClass = sizeMapping[id] || "h-medium";
 
                 const box = document.createElement('div');
                 box.className = `goal-box ${sizeClass}`;
                 box.onclick = () => openPanel(goal);
                 box.innerHTML = `
                     <div class="goal-glow" style="background-color: ${color};"></div>
-                    <div class="goal-title">${goal.Title}</div>
+                    <div class="goal-title">${title}</div>
                     <div class="goal-footer">
                         <div class="goal-status-row">
                             <div class="goal-pct" style="color: ${color};">${Math.round(pct * 100)}%</div>
@@ -243,16 +255,19 @@
             const list = period === 'weekly' ? localData.weekly : localData.monthly;
 
             list.forEach((item, index) => {
+                const goalTitle = getInsensitiveKey(item, 'goaltitle');
+                const periodTarget = getInsensitiveKey(item, 'periodtarget');
+
                 const uniqueId = `${period}-${index}`;
                 const card = document.createElement('div');
                 card.className = 'accordion-item';
                 card.innerHTML = `
                     <div class="accordion-header" onclick="toggleLocalAccordion('${uniqueId}')">
-                        <span>${item.GoalTitle}</span><span id="arrow-${uniqueId}">▼</span>
+                        <span>${goalTitle}</span><span id="arrow-${uniqueId}">▼</span>
                     </div>
                     <div class="accordion-content" id="content-${uniqueId}">
                         <div style="margin-bottom: 4px; font-weight: bold; color: var(--text-muted);">היעד שהוצב:</div>
-                        <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size:13px;">${item.PeriodTarget}</div>
+                        <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size:13px;">${periodTarget}</div>
                         
                         <div class="input-block">
                             <div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:var(--accent-green);">1. תיעוד גולמי חופשי:</div>
@@ -262,7 +277,7 @@
                             <div style="font-weight: bold; font-size: 12px; margin-top:8px; margin-bottom:4px; color:#ffb74d;">2. עדכון סטטיסטיקה (לדשבורד):</div>
                             <input type="number" id="num-${uniqueId}" class="text-input-cell" placeholder="הקלד ערך מספרי עדכני כללי (Current)...">
                             
-                            <button class="action-btn" style="background: ${period === 'weekly' ? 'var(--accent-green)' : '#ffb74d'}" onclick="processAndSend('${period}', ${index}, '${item.GoalTitle}', '${uniqueId}')">שמור וסנכרן לענן ✓</button>
+                            <button class="action-btn" style="background: ${period === 'weekly' ? 'var(--accent-green)' : '#ffb74d'}" onclick="processAndSend('${period}', ${index}, '${goalTitle}', '${uniqueId}')">שמור וסנכרן לענן ✓</button>
                         </div>
                     </div>`;
                 container.appendChild(card);
@@ -302,7 +317,7 @@
                 category: category,
                 date: dateStr,
                 goalTitle: goalTitle,
-                text: `${period === 'weekly' ? 'יעד שבועי' : 'יעד חנות'}`, 
+                text: `${period === 'weekly' ? 'יעד שבועי' : 'יעד חודשי'}`, 
                 textDone: txtDone || "לא תועד שינוי",
                 textRes: txtRes || "לא תועד שינוי",
                 updateNumericValue: numVal
@@ -327,7 +342,7 @@
                 document.getElementById(`res-${uniqueId}`).value = '';
                 document.getElementById(`num-${uniqueId}`).value = '';
                 
-                alert("הסנכרון הושלם בהצלחה! הנתונים פוצלו ב-RawLogs והדשבורד עודכן.");
+                alert("הסנכרון הושלם בהצלחה! הנתונים סונכרנו. רענן קלות את האפליקציה.");
                 fetchCloudData(); 
             } catch(err) {
                 alert("שגיאה בתקשורת מול גוגל שייטס.");
@@ -345,17 +360,18 @@
         }
 
         function openPanel(goal) {
-            document.getElementById('panelTitle').innerText = goal.Title;
+            const title = getInsensitiveKey(goal, 'title');
+            document.getElementById('panelTitle').innerText = title;
             
             let categoryKey = "כושר ומתח";
-            if(goal.Title.includes("חיסכון") || goal.Title.includes("כסף")) categoryKey = "פיננסי וחיסכון";
-            if(goal.Title.includes("ספרים")) categoryKey = "ספרים";
-            if(goal.Title.includes("פודקאסט") || goal.Title.includes("רשומים")) categoryKey = "פודקאסט";
-            if(goal.Title.includes("התנדבות") || goal.Title.includes("קהילה")) categoryKey = "התנדבות";
-            if(goal.Title.includes("הופעה")) categoryKey = "הופעה מול קהל";
-            if(goal.Title.includes("איטלקית")) categoryKey = "איטלקית";
+            if(title.includes("חיסכון") || title.includes("כסף")) categoryKey = "פיננסי וחיסכון";
+            if(title.includes("ספרים")) categoryKey = "ספרים";
+            if(title.includes("פודקאסט") || title.includes("רשומים")) categoryKey = "פודקאסט";
+            if(title.includes("התנדבות") || title.includes("קהילה")) categoryKey = "התנדבות";
+            if(title.includes("הופעה")) categoryKey = "הופעה מול קהל";
+            if(title.includes("איטלקית")) categoryKey = "איטלקית";
 
-            const filteredLogs = localData.rawLogs.filter(l => l.category === categoryKey);
+            const filteredLogs = localData.rawLogs.filter(l => l.category.toLowerCase().trim() === categoryKey.toLowerCase().trim());
             
             let content = '<h3>🏆 היסטוריית רשומות מפוצלת מה-Sheets:</h3>';
             if(filteredLogs.length === 0) {
@@ -395,7 +411,7 @@
             const categories = ["כושר ומתח", "פיננסי וחיסכון", "ספרים", "הופעה מול קהל", "התנדבות", "איטלקית", "פודקאסט"];
             
             categories.forEach((cat, index) => {
-                const logs = localData.rawLogs.filter(l => l.category === cat);
+                const logs = localData.rawLogs.filter(l => l.category.toLowerCase().trim() === cat.toLowerCase().trim());
                 let htmlContent = '';
                 
                 if(logs.length === 0) {
@@ -405,8 +421,9 @@
                         htmlContent += `
                             <div class="log-card-item" style="background: rgba(0,0,0,0.15); margin-bottom:8px;">
                                 <div class="log-card-header"><span>${log.date}</span></div>
-                                <div><b style="color:var(--text-muted); font-size:11px;">מה נעשה:</b> ${log.textDone}</div>
-                                <div style="margin-top:4px;"><b style="color:var(--text-muted); font-size:11px;">תוצאה:</b> ${log.textRes}</div>
+                                <div style="margin-top:4px;"><b style="color:var(--text-muted); font-size:11px;">יעד מקורי:</b> ${log.text}</div>
+                                <div style="margin-top:4px;"><b style="color:var(--text-muted); font-size:11px;">מה נעשה:</b> ${log.textDone}</div>
+                                <div style="margin-top:4px;"><b style="color:var(--accent-green); font-size:11px;">תוצאה:</b> ${log.textRes}</div>
                             </div>`;
                     });
                 }
