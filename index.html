@@ -25,134 +25,81 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
+        header { text-align: center; margin-bottom: 25px; }
         header h1 {
-            font-size: 24px;
-            margin: 0 0 4px 0;
-            font-weight: 800;
+            font-size: 24px; margin: 0 0 4px 0; font-weight: 800;
             background: linear-gradient(135deg, #ffffff 0%, #a5afc8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
         header p { color: var(--text-muted); margin: 0; font-size: 13px; }
 
         .app-page { display: none; }
         .app-page.active { display: block; }
+        .loading-screen { text-align: center; padding: 50px; color: var(--accent-green); font-weight: bold; }
 
-        .loading-screen {
-            text-align: center; padding: 50px; color: var(--accent-green); font-weight: bold;
-        }
-
-        /* רשת אסימטרית דו-טורית יציבה */
-        .goals-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            width: 100%;
-        }
-
+        .goals-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
         .goal-box {
-            background-color: var(--card-bg);
-            border-radius: 20px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+            background-color: var(--card-bg); border-radius: 20px; padding: 16px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; border: 1px solid var(--border-color); cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); overflow: hidden;
         }
 
         .h-small { height: 110px; }
         .h-medium { height: 140px; }
         .h-large { height: 175px; }
 
-        .goal-glow {
-            position: absolute;
-            bottom: -30px; left: -30px; right: -30px;
-            height: 60px;
-            filter: blur(20px);
-            opacity: 0.12;
-            pointer-events: none;
-        }
-
+        .goal-glow { position: absolute; bottom: -30px; left: -30px; right: -30px; height: 60px; filter: blur(20px); opacity: 0.12; pointer-events: none; }
         .goal-title { font-weight: 700; font-size: 14px; color: #fff; }
         .goal-footer { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
         .goal-status-row { display: flex; justify-content: space-between; align-items: flex-end; }
         .goal-pct { font-size: 18px; font-weight: 800; }
         .goal-status { font-size: 11px; color: var(--text-muted); }
 
-        .mini-progress {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 10px; height: 4px; width: 100%; overflow: hidden;
-        }
+        .mini-progress { background-color: rgba(255, 255, 255, 0.05); border-radius: 10px; height: 4px; width: 100%; overflow: hidden; }
         .mini-bar { height: 100%; border-radius: 10px; }
 
         .period-progress-card {
             background: linear-gradient(135deg, #191b28 0%, #12141f 100%);
-            border-radius: 18px; padding: 15px; margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 18px; padding: 15px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* רכיב אקורדיון משותף */
-        .accordion-item {
-            background-color: var(--card-bg);
-            border-radius: 16px; margin-bottom: 12px;
-            border: 1px solid var(--border-color); overflow: hidden;
-        }
+        .accordion-item { background-color: var(--card-bg); border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); overflow: hidden; }
         .accordion-header {
             padding: 16px; font-weight: 700; font-size: 14px; cursor: pointer;
-            background: rgba(255,255,255,0.01); display: flex; justify-content: space-between;
-            align-items: center;
+            background: rgba(255,255,255,0.01); display: flex; justify-content: space-between; align-items: center;
         }
         .accordion-content {
             padding: 0 16px; max-height: 0; overflow: hidden;
-            transition: max-height 0.25s ease-out, padding 0.25s ease;
-            font-size: 13px; color: #ced4e2; line-height: 1.5;
+            transition: max-height 0.25s ease-out, padding 0.25s ease; font-size: 13px; color: #ced4e2; line-height: 1.5;
         }
-        .accordion-content.open {
-            padding: 16px; max-height: max-content; overflow: visible;
-        }
+        .accordion-content.open { padding: 16px; max-height: max-content; overflow: visible; }
 
-        .input-block {
-            display: flex; flex-direction: column; gap: 8px; margin-top: 10px;
-        }
+        .input-block { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .input-row-double { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .text-input-cell {
             background: #1a1c28; color: #fff; border: 1px solid #2d3142;
             padding: 10px; border-radius: 8px; font-size: 13px; outline: none; width: 100%; box-sizing: border-box;
         }
-        .action-btn {
-            background: var(--accent-green); color: #000; border: none; padding: 10px;
-            border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; width: 100%;
-        }
+        .action-btn { background: var(--accent-green); color: #000; border: none; padding: 11px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; width: 100%; margin-top: 5px; }
 
-        /* ממשק פנימי מורחב */
         .details-panel {
-            position: fixed; top: 0; bottom: 0; left: 0; right: 0;
-            background-color: var(--panel-bg); z-index: 1000;
-            display: none; padding: 20px; flex-direction: column; overflow-y: auto;
+            position: fixed; top: 0; bottom: 0; left: 0; right: 0; background-color: var(--panel-bg); z-index: 1000; display: none; padding: 20px; flex-direction: column; overflow-y: auto;
         }
-        .btn-back {
-            background-color: #1e202e; color: var(--text-main); border: 1px solid #2d3142;
-            padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer;
-        }
+        .btn-back { background-color: #1e202e; color: var(--text-main); border: 1px solid #2d3142; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
         .panel-body { background-color: var(--card-bg); border-radius: 24px; padding: 20px; border: 1px solid var(--border-color); }
-        .achievement-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; }
-        .achievement-date { font-size: 11px; color: var(--accent-green); font-weight: bold; }
+        
+        /* עיצוב כרטיסיות הלוג המפורטות */
+        .log-card-item {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px; padding: 14px; margin-bottom: 12px; font-size: 13px;
+        }
+        .log-card-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px; font-weight: bold; color: var(--accent-green); }
+        .log-section-title { font-size: 11px; color: var(--text-muted); font-weight: bold; margin-top: 6px; margin-bottom: 2px; }
 
-        /* סרגל ניווט תחתון */
         .bottom-nav {
-            position: fixed; bottom: 15px; left: 12px; right: 12px;
-            background-color: rgba(20, 22, 34, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            display: flex; justify-content: space-around; padding: 10px 0;
-            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 99;
+            position: fixed; bottom: 15px; left: 12px; right: 12px; background-color: rgba(20, 22, 34, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around; padding: 10px 0; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 99;
         }
         .nav-item { color: var(--text-muted); text-decoration: none; font-size: 10px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-weight: 600; }
         .nav-item.active { color: #ffffff; }
@@ -161,13 +108,13 @@
 </head>
 <body>
 
-    <div id="loading" class="loading-screen">🔄 טוען נתונים חיים מ-Google Sheets...</div>
+    <div id="loading" class="loading-screen">🔄 מסתנכרן ומחשב נתונים בלייב מ-Google Sheets...</div>
 
     <div id="app-content" style="display: none;">
         <div id="page-dashboard" class="app-page active">
             <header>
                 <h1>המסע אל היעדים</h1>
-                <p>מבנה אסימטרי מסודר - מחובר לענן גוגל</p>
+                <p>מחובר לענן גוגל - עדכון סטטיסטיקות חיים</p>
             </header>
             <div class="goals-grid" id="goalsGrid"></div>
         </div>
@@ -175,7 +122,7 @@
         <div id="page-weekly" class="app-page">
             <header>
                 <h1>יומן מטרות שבועי</h1>
-                <p>נהל והזן את יעדי השבוע באקורדיונים</p>
+                <p>הזן התקדמות שבועית ועדכן את מדדי הדשבורד</p>
             </header>
             <div class="period-progress-card">
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
@@ -190,7 +137,7 @@
         <div id="page-monthly" class="app-page">
             <header>
                 <h1>מטרות חודשיות</h1>
-                <p>ניהול יעדי מקרו חודשיים בטקסט חופשי</p>
+                <p>ניהול יעדי מקרו ועדכון מדדים חודשיים</p>
             </header>
             <div class="period-progress-card">
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
@@ -205,7 +152,7 @@
         <div id="page-raw" class="app-page">
             <header>
                 <h1>מאגר רשומות גולמי</h1>
-                <p>סנכרון מלא מול לשונית RawLogs בקובץ שלך</p>
+                <p>תצוגה מפורטת ומפוצלת מתוך לשונית RawLogs</p>
             </header>
             <div id="rawAccordionContainer"></div>
         </div>
@@ -227,14 +174,12 @@
     </nav>
 
     <script>
-        // 🔗 הזרקה קבועה של הצינור הטכנולוגי שלך
         const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbwOa7fzsk5tc3JT4-aIVEbriHXjZYy01fcjITYCbCtjp8gfppFp5wdNQInDCMIEwKmL/exec";
 
         let localData = { dashboard: [], weekly: [], monthly: [], rawLogs: [] };
         let weeklyDoneMap = {};
         let monthlyDoneMap = {};
 
-        // מפת גבהים קבועה לשמירה על אסתטיקה אסימטרית (הופעה מול קהל מוגדרת כקטנה)
         const sizeMapping = { 1: "h-medium", 2: "h-large", 3: "h-large", 4: "h-small", 5: "h-small", 6: "h-small", 7: "h-medium" };
 
         async function fetchCloudData() {
@@ -250,7 +195,7 @@
                 renderPeriodAccordions('monthly');
                 renderRawAccordion();
             } catch (err) {
-                document.getElementById('loading').innerText = "❌ שגיאה בטעינת הנתונים מהענן. ודא שהקובץ מוגדר כראוי.";
+                document.getElementById('loading').innerText = "❌ שגיאה בסנכרון. ודא שביצעת פריסה מחדש (New Version) ב-Apps Script.";
                 console.error(err);
             }
         }
@@ -263,15 +208,14 @@
             const grid = document.getElementById('goalsGrid');
             grid.innerHTML = '';
             
-            // סידור מובטח שבו יעד 4 (הופעה מול קהל) ממוקם בטור שמאל לאסתטיקה
-            const sortedDashboard = [...localData.dashboard].sort((a,b) => {
-                if(a.ID == 4) return -1;
-                return 1;
-            });
+            // מיון קבוע להבטחת אסתטיקה אסימטרית יציבה
+            const sortedDashboard = [...localData.dashboard].sort((a,b) => (a.ID == 4) ? -1 : 1);
 
             localData.dashboard.forEach(goal => {
+                // המרה מדויקת למספרים למניעת באגים ברישום האחוזים
                 const current = parseFloat(goal.Current) || 0;
                 const target = parseFloat(goal.Target) || 1;
+                const unit = goal.Unit || '';
                 const pct = Math.min(current / target, 1);
                 const color = getScaleColor(pct);
                 const sizeClass = sizeMapping[goal.ID] || "h-medium";
@@ -285,7 +229,7 @@
                     <div class="goal-footer">
                         <div class="goal-status-row">
                             <div class="goal-pct" style="color: ${color};">${Math.round(pct * 100)}%</div>
-                            <div class="goal-status">${current.toLocaleString()}/${target.toLocaleString()}</div>
+                            <div class="goal-status">${current.toLocaleString()} / ${target.toLocaleString()} ${unit}</div>
                         </div>
                         <div class="mini-progress"><div class="mini-bar" style="width:${pct*100}%; background-color:${color};"></div></div>
                     </div>`;
@@ -298,11 +242,6 @@
             container.innerHTML = '';
             const list = period === 'weekly' ? localData.weekly : localData.monthly;
 
-            if(list.length === 0) {
-                container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center;">אין יעדים פעילים בלשונית גוגל שייטס.</p>`;
-                return;
-            }
-
             list.forEach((item, index) => {
                 const uniqueId = `${period}-${index}`;
                 const card = document.createElement('div');
@@ -312,13 +251,18 @@
                         <span>${item.GoalTitle}</span><span id="arrow-${uniqueId}">▼</span>
                     </div>
                     <div class="accordion-content" id="content-${uniqueId}">
-                        <div style="margin-bottom: 8px; font-weight: bold; color: var(--text-muted);">המטרה הנוכחית שהוצבה:</div>
+                        <div style="margin-bottom: 4px; font-weight: bold; color: var(--text-muted);">היעד שהוצב:</div>
                         <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size:13px;">${item.PeriodTarget}</div>
                         
                         <div class="input-block">
-                            <label style="font-size: 12px; color: var(--text-muted);">רשום ביצוע חופשי בפועל:</label>
-                            <input type="text" id="input-${uniqueId}" class="text-input-cell" placeholder="הקלד כאן את תוצאות הביצוע שלך...">
-                            <button class="action-btn" style="background: ${period === 'weekly' ? 'var(--accent-green)' : '#ffb74d'}" onclick="sendTaskToCloud('${period}', ${index}, '${item.GoalTitle}', 'input-${uniqueId}')">אישור וסמן וי ✓</button>
+                            <div style="font-weight: bold; font-size: 12px; margin-bottom:4px; color:var(--accent-green);">1. תיעוד גולמי חופשי:</div>
+                            <input type="text" id="done-${uniqueId}" class="text-input-cell" style="margin-bottom:6px;" placeholder="מה עשיתי עד כה (TextDone)...">
+                            <input type="text" id="res-${uniqueId}" class="text-input-cell" placeholder="תוצאות שהושגו (TextRes)...">
+                            
+                            <div style="font-weight: bold; font-size: 12px; margin-top:8px; margin-bottom:4px; color:#ffb74d;">2. עדכון סטטיסטיקה (לדשבורד):</div>
+                            <input type="number" id="num-${uniqueId}" class="text-input-cell" placeholder="הקלד ערך מספרי עדכני כללי (Current)...">
+                            
+                            <button class="action-btn" style="background: ${period === 'weekly' ? 'var(--accent-green)' : '#ffb74d'}" onclick="processAndSend('${period}', ${index}, '${item.GoalTitle}', '${uniqueId}')">שמור וסנכרן לענן ✓</button>
                         </div>
                     </div>`;
                 container.appendChild(card);
@@ -332,22 +276,24 @@
             arrow.innerText = content.classList.contains('open') ? '▲' : '▼';
         }
 
-        async function sendTaskToCloud(period, index, goalTitle, inputId) {
-            const textVal = document.getElementById(inputId).value.trim();
-            if(!textVal) {
-                alert("אנא הקלד טקסט לפני סימון הוי!");
+        async function processAndSend(period, index, goalTitle, uniqueId) {
+            const txtDone = document.getElementById(`done-${uniqueId}`).value.trim();
+            const txtRes = document.getElementById(`res-${uniqueId}`).value.trim();
+            const numVal = document.getElementById(`num-${uniqueId}`).value.trim();
+
+            if(!txtDone && !txtRes && !numVal) {
+                alert("אנא מלא לפחות שדה אחד לפני השמירה!");
                 return;
             }
 
             const now = new Date();
             const dateStr = `${now.getDate()}.${now.getMonth()+1}.${now.getFullYear()}`;
 
-            // זיהוי קטגוריה אוטומטית להזרקה לגולמי
             let category = "כושר ומתח";
             if(goalTitle.includes("חיסכון") || goalTitle.includes("כסף") || goalTitle.includes("פיננסי")) category = "פיננסי וחיסכון";
             if(goalTitle.includes("ספרים")) category = "ספרים";
-            if(goalTitle.includes("פודקאסט")) category = "פודקאסט";
-            if(goalTitle.includes("התנדבות")) category = "התנדבות";
+            if(goalTitle.includes("פודקאסט") || goalTitle.includes("רשומים")) category = "פודקאסט";
+            if(goalTitle.includes("התנדבות") || goalTitle.includes("קהילה")) category = "התנדבות";
             if(goalTitle.includes("הופעה")) category = "הופעה מול קהל";
             if(goalTitle.includes("איטלקית")) category = "איטלקית";
 
@@ -355,12 +301,16 @@
                 action: "completeTask",
                 category: category,
                 date: dateStr,
-                text: textVal + ` (${period === 'weekly' ? 'עדכון שבועי' : 'עדכון חודשי'})`
+                goalTitle: goalTitle,
+                text: `${period === 'weekly' ? 'יעד שבועי' : 'יעד חנות'}`, 
+                textDone: txtDone || "לא תועד שינוי",
+                textRes: txtRes || "לא תועד שינוי",
+                updateNumericValue: numVal
             };
 
             try {
-                alert("מזרים ומעדכן את המאגר בגוגל שייטס...");
-                const response = await fetch(CLOUD_API_URL, {
+                alert("מעדכן את מסד הנתונים בענן ומחשב אחוזים...");
+                await fetch(CLOUD_API_URL, {
                     method: "POST",
                     mode: "no-cors",
                     cache: "no-cache",
@@ -368,16 +318,19 @@
                     body: JSON.stringify(payload)
                 });
 
-                // עדכון זמני מקומי של מונה אחוזי קירבה ליעדים
                 if(period === 'weekly') weeklyDoneMap[index] = true;
                 if(period === 'monthly') monthlyDoneMap[index] = true;
                 
                 updatePeriodUIPercentages(period);
-                document.getElementById(inputId).value = '';
-                alert("התוצאה נשמרה בהצלחה בענן והוזרקה לטאב גולמי! רענן את האפליקציה לצפייה בעדכון המלא.");
-                fetchCloudData(); // רענון נתונים בלייב
+                
+                document.getElementById(`done-${uniqueId}`).value = '';
+                document.getElementById(`res-${uniqueId}`).value = '';
+                document.getElementById(`num-${uniqueId}`).value = '';
+                
+                alert("הסנכרון הושלם בהצלחה! הנתונים פוצלו ב-RawLogs והדשבורד עודכן.");
+                fetchCloudData(); 
             } catch(err) {
-                alert("שגיאה בסנכרון מול גוגל שייטס.");
+                alert("שגיאה בתקשורת מול גוגל שייטס.");
             }
         }
 
@@ -394,26 +347,30 @@
         function openPanel(goal) {
             document.getElementById('panelTitle').innerText = goal.Title;
             
-            // סינון והצגת ההישגים של נושא זה מתוך לשונית הרשומות הגולמיות האמיתית בשיטס!
             let categoryKey = "כושר ומתח";
             if(goal.Title.includes("חיסכון") || goal.Title.includes("כסף")) categoryKey = "פיננסי וחיסכון";
             if(goal.Title.includes("ספרים")) categoryKey = "ספרים";
-            if(goal.Title.includes("פודקאסט")) categoryKey = "פודקאסט";
-            if(goal.Title.includes("התנדבות")) categoryKey = "התנדבות";
+            if(goal.Title.includes("פודקאסט") || goal.Title.includes("רשומים")) categoryKey = "פודקאסט";
+            if(goal.Title.includes("התנדבות") || goal.Title.includes("קהילה")) categoryKey = "התנדבות";
             if(goal.Title.includes("הופעה")) categoryKey = "הופעה מול קהל";
             if(goal.Title.includes("איטלקית")) categoryKey = "איטלקית";
 
             const filteredLogs = localData.rawLogs.filter(l => l.category === categoryKey);
             
-            let content = '<h3>🏆 אבני דרך והיסטוריה מתוך ה-Sheets:</h3>';
+            let content = '<h3>🏆 היסטוריית רשומות מפוצלת מה-Sheets:</h3>';
             if(filteredLogs.length === 0) {
-                content += `<p style="font-size:12px; color:var(--text-muted);">אין עדיין היסטוריית רשומות לוג ללשונית זו בקובץ הגוגל שייטס.</p>`;
+                content += `<p style="font-size:12px; color:var(--text-muted);">אין עדיין היסטוריית רשומות מפוצלת.</p>`;
             } else {
                 filteredLogs.forEach(log => {
                     content += `
-                        <div class="achievement-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
-                            <span class="achievement-date">${log.date}</span>
-                            <span style="color:#ced4e2; line-height:1.4;">${log.text}</span>
+                        <div class="log-card-item">
+                            <div class="log-card-header"><span>📅 ${log.date}</span></div>
+                            <div class="log-section-title">🎯 יעד מקורי:</div>
+                            <div style="color:#fff;">${log.text}</div>
+                            <div class="log-section-title">🏃 מה עשיתי עד כה:</div>
+                            <div style="color:#ced4e2;">${log.textDone || '-'}</div>
+                            <div class="log-section-title">🏆 תוצאות שהושגו:</div>
+                            <div style="color:var(--accent-green); font-weight:500;">${log.textRes || '-'}</div>
                         </div>`;
                 });
             }
@@ -435,13 +392,24 @@
             const container = document.getElementById('rawAccordionContainer');
             container.innerHTML = '';
 
-            // קיבוץ רשומות גולמיות לפי קטגוריות בשיטס
             const categories = ["כושר ומתח", "פיננסי וחיסכון", "ספרים", "הופעה מול קהל", "התנדבות", "איטלקית", "פודקאסט"];
             
             categories.forEach((cat, index) => {
                 const logs = localData.rawLogs.filter(l => l.category === cat);
-                let logsText = logs.map(l => `• [${l.date}]: ${l.text}`).join('\n');
-                if(!logsText) logsText = "אין רשומות גולמיות זמינות בלשונית האקסל.";
+                let htmlContent = '';
+                
+                if(logs.length === 0) {
+                    htmlContent = `<div style="padding:10px; color:var(--text-muted);">אין רשומות גולמיות זמינות.</div>`;
+                } else {
+                    logs.forEach(log => {
+                        htmlContent += `
+                            <div class="log-card-item" style="background: rgba(0,0,0,0.15); margin-bottom:8px;">
+                                <div class="log-card-header"><span>${log.date}</span></div>
+                                <div><b style="color:var(--text-muted); font-size:11px;">מה נעשה:</b> ${log.textDone}</div>
+                                <div style="margin-top:4px;"><b style="color:var(--text-muted); font-size:11px;">תוצאה:</b> ${log.textRes}</div>
+                            </div>`;
+                    });
+                }
 
                 const item = document.createElement('div');
                 item.className = 'accordion-item';
@@ -449,7 +417,7 @@
                     <div class="accordion-header" onclick="toggleRawAccordion(${index})">
                         <span>${cat}</span><span id="raw-arrow-${index}">▼</span>
                     </div>
-                    <div class="accordion-content" id="raw-content-${index}" style="white-space: pre-line; padding-bottom:0;">${logsText}</div>`;
+                    <div class="accordion-content" id="raw-content-${index}">${htmlContent}</div>`;
                 container.appendChild(item);
             });
         }
@@ -458,16 +426,9 @@
             const content = document.getElementById(`raw-content-${index}`);
             const arrow = document.getElementById(`raw-arrow-${index}`);
             content.classList.toggle('open');
-            if(content.classList.contains('open')) {
-                content.style.padding = '16px';
-                arrow.innerText = '▲';
-            } else {
-                content.style.padding = '0 16px';
-                arrow.innerText = '▼';
-            }
+            arrow.innerText = content.classList.contains('open') ? '▲' : '▼';
         }
 
-        // הפעלה ראשונית של האפליקציה ומשיכת הנתונים מהענן
         fetchCloudData();
     </script>
 </body>
